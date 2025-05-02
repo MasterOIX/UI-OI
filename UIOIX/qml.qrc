@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>UI/BottomBar/BottomBar.qml</file>
+    </qresource>
+</RCC>
