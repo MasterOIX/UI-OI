@@ -23,4 +23,8 @@ Rectangle {
         center: QtPositioning.coordinate(44.20147691467647, 26.19891163624485) // Colibasi
         zoomLevel: 13
     }
+
+    NavigationSearchBox {
+        id: navigationSearchBox
+    }
 }

@@ -3,7 +3,10 @@
 System::System(QObject *parent)
     : QObject(parent),
       m_carLocked(false),
-      m_outdoorTemp(21)
+      m_outdoorTemp(21),
+      m_userName("Dragos"),
+      m_batteryPercent(1),
+      m_volume(0)
 {
 
 }
@@ -58,4 +61,32 @@ void System::setBatteryPercent(int newBatteryPercent)
         return;
     m_batteryPercent = newBatteryPercent;
     emit batteryPercentChanged(m_batteryPercent);
+}
+
+int System::volume() const
+{
+    return m_volume;
+}
+
+void System::setVolume(int newVolume)
+{
+    if (m_volume == newVolume)
+        return;
+    m_volume = newVolume;
+    emit volumeChanged(m_volume);
+}
+
+void System::increaseVolume()
+{
+    setVolume(m_volume + 1);
+}
+
+void System::decreaseVolume()
+{
+    setVolume(m_volume - 1);
+}
+
+void System::muteVolume()
+{
+    setVolume(0);
 }

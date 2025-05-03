@@ -6,6 +6,7 @@
 #include <QTranslator>
 
 #include <Controllers/system.h>
+#include <Controllers/hvachandler.h>
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +21,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     System m_system_handler;
+    HVACHandler m_hvac_handler;
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -35,6 +37,8 @@ int main(int argc, char *argv[])
 
     QQmlContext *context = engine.rootContext();
     context->setContextProperty("systemHandler", &m_system_handler);
+    context->setContextProperty("hvacHandler", &m_hvac_handler);
+
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(
         &engine,

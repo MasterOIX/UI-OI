@@ -8,5 +8,14 @@
         <file>UI/assests/lock.png</file>
         <file>UI/assests/unlock.png</file>
         <file>UI/TopBar/TopBar.qml</file>
+        <file>UI/assests/settings.png</file>
+        <file>UI/assests/user.png</file>
+        <file>UI/RightScreen/NavigationSearchBox.qml</file>
+        <file>UI/assests/search.png</file>
+        <file>UI/assests/mute.png</file>
+        <file>UI/assests/volume_1.png</file>
+        <file>UI/assests/volume_2.png</file>
+        <file>UI/assests/minus.png</file>
+        <file>UI/assests/plus.png</file>
     </qresource>
 </RCC>
