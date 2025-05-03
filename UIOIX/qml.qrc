@@ -2,5 +2,11 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>UI/BottomBar/BottomBar.qml</file>
+        <file>UI/RightScreen/RightScreen.qml</file>
+        <file>UI/LeftScreen/LeftScreen.qml</file>
+        <file>UI/assests/car_front_icon.png</file>
+        <file>UI/assests/lock.png</file>
+        <file>UI/assests/unlock.png</file>
+        <file>UI/TopBar/TopBar.qml</file>
     </qresource>
 </RCC>

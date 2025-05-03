@@ -1,8 +1,11 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
 #include <QLocale>
 #include <QTranslator>
+
+#include <Controllers/system.h>
 
 int main(int argc, char *argv[])
 {
@@ -16,6 +19,8 @@ int main(int argc, char *argv[])
     }
     QGuiApplication app(argc, argv);
 
+    System m_system_handler;
+
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {
@@ -27,6 +32,9 @@ int main(int argc, char *argv[])
     }
 
     QQmlApplicationEngine engine;
+
+    QQmlContext *context = engine.rootContext();
+    context->setContextProperty("systemHandler", &m_system_handler);
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(
         &engine,
@@ -38,6 +46,7 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection);
     engine.load(url);
+
 
     return app.exec();
 }
