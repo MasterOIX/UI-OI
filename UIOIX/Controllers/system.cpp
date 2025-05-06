@@ -6,7 +6,7 @@ System::System(QObject *parent)
       m_outdoorTemp(21),
       m_userName("Dragos"),
       m_batteryPercent(1),
-      m_volume(0)
+      m_tempUnit("°C")
 {
 
 }
@@ -63,30 +63,16 @@ void System::setBatteryPercent(int newBatteryPercent)
     emit batteryPercentChanged(m_batteryPercent);
 }
 
-int System::volume() const
+
+QString System::tempUnit() const
 {
-    return m_volume;
+    return m_tempUnit;
 }
 
-void System::setVolume(int newVolume)
+void System::setTempUnit(const QString &newTempUnit)
 {
-    if (m_volume == newVolume)
+    if (m_tempUnit == newTempUnit)
         return;
-    m_volume = newVolume;
-    emit volumeChanged(m_volume);
-}
-
-void System::increaseVolume()
-{
-    setVolume(m_volume + 1);
-}
-
-void System::decreaseVolume()
-{
-    setVolume(m_volume - 1);
-}
-
-void System::muteVolume()
-{
-    setVolume(0);
+    m_tempUnit = newTempUnit;
+    emit tempUnitChanged(m_tempUnit);
 }

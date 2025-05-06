@@ -5,8 +5,10 @@ QT += quick qml quickcontrols2 location positioning opengl
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        Controllers/audiocontroller.cpp \
         Controllers/hvachandler.cpp \
         Controllers/system.cpp \
+        Controllers/zonecontroller.cpp \
         main.cpp
 
 RESOURCES += qml.qrc
@@ -15,6 +17,7 @@ TRANSLATIONS += \
     UIOI_ro_RO.ts
 CONFIG += lrelease
 CONFIG += embed_translations
+CONFIG += c++17
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -28,5 +31,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    Controllers/audiocontroller.h \
     Controllers/hvachandler.h \
-    Controllers/system.h
+    Controllers/system.h \
+    Controllers/zonecontroller.h

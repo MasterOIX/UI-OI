@@ -15,67 +15,92 @@ Rectangle {
         id: carSettingsIcon
         anchors {
             left: parent.left
-            leftMargin: 30
             verticalCenter: parent.verticalCenter
 
         }
         height: parent.height * 0.65
+        width: 120
         fillMode: Image.PreserveAspectFit
         source: "qrc:/UI/assests/car_front_icon.png"
     }
 
-    Image {
-        id: plusIcon
-        anchors {
-            right: parent.right
-            rightMargin: 20
-            verticalCenter: parent.verticalCenter
+    VolumeControlComponent {
+        id: volumeControl
+    }
+
+    HVACButton {
+        id: syncController
+        value: hvacHandler.syncEnabled
+        toggleFunction: function(newState) {
+            hvacHandler.syncEnabled = newState
+            console.log("Sync enabled: " + newState)
         }
-        height: parent.height * 0.30
-        fillMode: Image.PreserveAspectFit
-        source: "qrc:/UI/assests/plus.png"
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                console.log("Image clicked")
-                systemHandler.increaseVolume()
-            }
-            cursorShape: Qt.PointingHandCursor
+        buttonTxt: "Sync"
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            left: carSettingsIcon.right
+            leftMargin: 10
         }
     }
 
-    Image {
-        id: volumeIcon
+    HVACButton {
+        id: acController
+        value: hvacHandler.ACEnabled
+        toggleFunction: function(newState) {
+            hvacHandler.ACEnabled = newState
+        }
+        buttonTxt: "A/C"
         anchors {
-            right: plusIcon.left
+            top: parent.top
+            bottom: parent.bottom
+            right: volumeControl.left
             rightMargin: 10
-            verticalCenter: parent.verticalCenter
         }
-        smooth: true
-        height: parent.height * 0.55
-        fillMode: Image.PreserveAspectFit
-        source: systemHandler.volume > 50 ? "qrc:/UI/assests/volume_1.png"
-              : systemHandler.volume > 0 ? "qrc:/UI/assests/volume_2.png"
-              : "qrc:/UI/assests/mute.png"
     }
 
-    Image {
-        id: minusIcon
+
+    HVACTemperature {
+        id: driverHVACTemperature
+        zoneModel: hvacHandler.driverZone
+
         anchors {
-            right: volumeIcon.left
-            rightMargin: 12
-            verticalCenter: parent.verticalCenter
+            left: syncController.right
+            leftMargin: 20
         }
-        width: parent.height * 0.30
-        fillMode: Image.PreserveAspectFit
-        source: "qrc:/UI/assests/minus.png"
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                console.log("Image clicked")
-                systemHandler.decreaseVolume()
+    }
+
+    HVACTemperature {
+        id: passengerHVACTemperature
+        zoneModel: hvacHandler.passengerZone
+        anchors {
+            right: acController.left
+            rightMargin: 20
+        }
+    }
+
+    Connections {
+        target: hvacHandler
+        onSyncEnabledChanged: {
+            syncController.value = hvacHandler.syncEnabled
+        }
+    }
+
+    Connections {
+        target: hvacHandler.driverZone
+        onTemperatureChanged: {
+            if (hvacHandler.syncEnabled) {
+                hvacHandler.passengerZone.temperature = hvacHandler.driverZone.temperature
             }
-            cursorShape: Qt.PointingHandCursor
+        }
+    }
+
+    Connections {
+        target: hvacHandler.passengerZone
+        onTemperatureChanged: {
+            if (hvacHandler.syncEnabled) {
+                hvacHandler.syncEnabled = false
+            }
         }
     }
 }

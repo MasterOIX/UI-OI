@@ -2,6 +2,7 @@
 #define SYSTEM_H
 
 #include <QObject>
+#include <QString>
 
 class System : public QObject
 {
@@ -10,8 +11,7 @@ class System : public QObject
     Q_PROPERTY(int outdoorTemp READ outdoorTemp WRITE setOutdoorTemp NOTIFY outdoorTempChanged)
     Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
     Q_PROPERTY(int batteryPercent READ batteryPercent WRITE setBatteryPercent NOTIFY batteryPercentChanged)
-    Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
-
+    Q_PROPERTY(QString tempUnit READ tempUnit WRITE setTempUnit NOTIFY tempUnitChanged)
 
 public:
     explicit System(QObject *parent = nullptr);
@@ -28,12 +28,8 @@ public:
     int batteryPercent() const;
     void setBatteryPercent(int newBatteryPercent);
 
-    int volume() const;
-    void setVolume(int newVolume);
-
-    Q_INVOKABLE void increaseVolume();
-    Q_INVOKABLE void decreaseVolume();
-    Q_INVOKABLE void muteVolume();
+    QString tempUnit() const;
+    void setTempUnit(const QString &newTempUnit);
 
 signals:
 
@@ -41,14 +37,14 @@ signals:
     void outdoorTempChanged(int outdoorTemp);
     void userNameChanged(QString userName);
     void batteryPercentChanged(int batteryPercent);
-    void volumeChanged(int volume);
+    void tempUnitChanged(QString tempUnit);
 
 private:
     bool m_carLocked;
     int m_outdoorTemp;
     QString m_userName;
     int m_batteryPercent;
-    int m_volume;
+    QString m_tempUnit;
 };
 
 #endif // SYSTEM_H

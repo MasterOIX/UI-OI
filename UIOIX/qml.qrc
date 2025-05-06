@@ -12,10 +12,13 @@
         <file>UI/assests/user.png</file>
         <file>UI/RightScreen/NavigationSearchBox.qml</file>
         <file>UI/assests/search.png</file>
-        <file>UI/assests/mute.png</file>
         <file>UI/assests/volume_1.png</file>
         <file>UI/assests/volume_2.png</file>
         <file>UI/assests/minus.png</file>
         <file>UI/assests/plus.png</file>
+        <file>UI/assests/mute.png</file>
+        <file>UI/BottomBar/VolumeControlComponent.qml</file>
+        <file>UI/BottomBar/HVACTemperature.qml</file>
+        <file>UI/BottomBar/HVACButton.qml</file>
     </qresource>
 </RCC>

@@ -5,8 +5,13 @@
 #include <QLocale>
 #include <QTranslator>
 
+#include <QSslSocket>
+#include <QDebug>
+
 #include <Controllers/system.h>
 #include <Controllers/hvachandler.h>
+#include <Controllers/audiocontroller.h>
+#include <Controllers/zonecontroller.h>
 
 int main(int argc, char *argv[])
 {
@@ -20,8 +25,11 @@ int main(int argc, char *argv[])
     }
     QGuiApplication app(argc, argv);
 
+    qmlRegisterUncreatableType<ZoneController>("HVAC", 1, 0, "ZoneController", "Accessed via HVACHandler");
+
     System m_system_handler;
     HVACHandler m_hvac_handler;
+    AudioController m_audio_controller;
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -38,6 +46,7 @@ int main(int argc, char *argv[])
     QQmlContext *context = engine.rootContext();
     context->setContextProperty("systemHandler", &m_system_handler);
     context->setContextProperty("hvacHandler", &m_hvac_handler);
+    context->setContextProperty("audioController", &m_audio_controller);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(
@@ -50,6 +59,10 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection);
     engine.load(url);
+
+    qDebug() << "Supports SSL:" << QSslSocket::supportsSsl();
+    qDebug() << "Build version:" << QSslSocket::sslLibraryBuildVersionString();
+    qDebug() << "Runtime version:" << QSslSocket::sslLibraryVersionString();
 
 
     return app.exec();

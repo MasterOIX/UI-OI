@@ -2,68 +2,16 @@
 
 HVACHandler::HVACHandler(QObject *parent)
     : QObject(parent),
-      m_driverTemperature(21),
-      m_passengerTemperature(21),
       m_ACEnabled(false),
-      m_syncEnabled(false)
-{}
-
-int HVACHandler::driverTemperature() const
+      m_syncEnabled(false),
+      m_airFromOutside(true),
+      m_rearHeater(false),
+      m_maxAC(false),
+      m_maxHeat(false),
+      m_driverZone(new ZoneController(this)),
+      m_passengerZone(new ZoneController(this))
 {
-    return m_driverTemperature;
-}
 
-void HVACHandler::setDriverTemperature(int newDriverTemperature)
-{
-    if (m_driverTemperature == newDriverTemperature)
-        return;
-    m_driverTemperature = newDriverTemperature;
-    emit driverTemperatureChanged(m_driverTemperature);
-}
-
-void HVACHandler::increaseDriverTemperature()
-{
-    if (m_syncEnabled) {
-        setPassengerTemperature(m_passengerTemperature + 1);
-    }
-    setDriverTemperature(m_driverTemperature + 1);
-}
-
-void HVACHandler::decreaseDriverTemperature()
-{
-    if (m_syncEnabled) {
-        setPassengerTemperature(m_passengerTemperature - 1);
-    }
-    setDriverTemperature(m_driverTemperature - 1);
-}
-
-int HVACHandler::passengerTemperature() const
-{
-    return m_passengerTemperature;
-}
-
-void HVACHandler::setPassengerTemperature(int newPassengerTemperature)
-{
-    if (m_passengerTemperature == newPassengerTemperature)
-        return;
-    m_passengerTemperature = newPassengerTemperature;
-    emit passengerTemperatureChanged(m_passengerTemperature);
-}
-
-void HVACHandler::increasePassengerTemperature()
-{
-    if (m_syncEnabled) {
-        setSyncEnabled(false);
-    }
-    setPassengerTemperature(m_passengerTemperature + 1);
-}
-
-void HVACHandler::decreasePassengerTemperature()
-{
-    if (m_syncEnabled) {
-        setSyncEnabled(false);
-    }
-    setPassengerTemperature(m_passengerTemperature - 1);
 }
 
 bool HVACHandler::ACEnabled() const
@@ -90,7 +38,67 @@ void HVACHandler::setSyncEnabled(bool newSyncEnabled)
         return;
     m_syncEnabled = newSyncEnabled;
     if (m_syncEnabled) {
-        setPassengerTemperature(m_driverTemperature);
+        m_passengerZone->setTemperature(m_driverZone->temperature());
     }
     emit syncEnabledChanged(m_syncEnabled);
+}
+
+bool HVACHandler::airFromOutside() const
+{
+    return m_airFromOutside;
+}
+
+void HVACHandler::setAirFromOutside(bool newAirFromOutside)
+{
+    if (m_airFromOutside == newAirFromOutside)
+        return;
+    m_airFromOutside = newAirFromOutside;
+    emit airFromOutsideChanged();
+}
+
+bool HVACHandler::rearHeater() const
+{
+    return m_rearHeater;
+}
+
+void HVACHandler::setRearHeater(bool newRearHeater)
+{
+    if (m_rearHeater == newRearHeater)
+        return;
+    m_rearHeater = newRearHeater;
+    emit rearHeaterChanged();
+}
+
+bool HVACHandler::maxAC() const
+{
+    return m_maxAC;
+}
+
+void HVACHandler::setMaxAC(bool newMaxAC)
+{
+    if (m_maxAC == newMaxAC)
+        return;
+    m_maxAC = newMaxAC;
+    emit maxACChanged();
+}
+
+bool HVACHandler::maxHeat() const
+{
+    return m_maxHeat;
+}
+
+void HVACHandler::setMaxHeat(bool newMaxHeat)
+{
+    if (m_maxHeat == newMaxHeat)
+        return;
+    m_maxHeat = newMaxHeat;
+    emit maxHeatChanged();
+}
+
+ZoneController* HVACHandler::driverZone() const {
+    return m_driverZone;
+}
+
+ZoneController* HVACHandler::passengerZone() const {
+    return m_passengerZone;
 }
