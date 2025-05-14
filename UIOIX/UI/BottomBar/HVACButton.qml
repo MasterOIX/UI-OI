@@ -7,8 +7,8 @@ Rectangle {
 
     id: buttonIcon
 
-    width: parent.height
-    color: "black"
+    width: bar_height
+    color: "transparent"
 
     MouseArea {
         id: buttonArea

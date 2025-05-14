@@ -20,5 +20,22 @@
         <file>UI/BottomBar/VolumeControlComponent.qml</file>
         <file>UI/BottomBar/HVACTemperature.qml</file>
         <file>UI/BottomBar/HVACButton.qml</file>
+        <file>UI/BottomBar/GlowingTriangle.qml</file>
+        <file>UI/BottomBar/GlowingLine.qml</file>
+        <file>UI/assests/car_seat.png</file>
+        <file>UI/assests/driver_seat.png</file>
+        <file>UI/BottomBar/CarSeat.qml</file>
+        <file>UI/assests/heater.png</file>
+        <file>UI/assests/arrow.png</file>
+        <file>UI/assests/arrow_leg.png</file>
+        <file>UI/assests/rear.png</file>
+        <file>UI/assests/air.png</file>
+        <file>UI/BottomBar/ACLine.qml</file>
+        <file>UI/assests/radiator-fan.png</file>
+        <file>UI/assests/radiator-fan32.png</file>
+        <file>UI/BottomBar/FanSpeed.qml</file>
+        <file>UI/assests/seat.png</file>
+        <file>UI/assests/seat_p.png</file>
+        <file>UI/BottomBar/SeatHeaterIndicator.qml</file>
     </qresource>
 </RCC>

@@ -4,12 +4,13 @@ Rectangle {
     id: volumeControl
     anchors {
         top: parent.top
-        bottom: parent.bottom
+        topMargin: 3
         right: parent.right
     }
     color: "transparent"
 
     width: 120
+    height: bar_height
 
     function showVolumeTextTemporarily() {
         textRect.visible = true

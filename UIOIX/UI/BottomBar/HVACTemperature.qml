@@ -6,14 +6,11 @@ Rectangle {
     id: hvacTemperature
 
     property var zoneModel
-
-    anchors {
-        top: parent.top
-        bottom: parent.bottom
-    }
+    property real startY: 0
 
     color: "transparent"
     width: 90
+    height: bar_height
 
     Rectangle {
         id: decrementButton
@@ -68,6 +65,29 @@ Rectangle {
             font.pixelSize: 20
             anchors.centerIn: parent
         }
+
+        MouseArea {
+            anchors.fill: parent
+            onPressed: {
+                startY = mouse.y
+            }
+
+            onReleased: {
+                var deltaY = startY - mouse.y
+                if (deltaY > 50) { // threshold for swipe up
+                    if (bottomBar.height === bar_height) {
+                        bottomBar.height = bottomBar.height * 2
+                        collapseTimer.start()
+                    }
+                }
+                else if (deltaY < -50) { // threshold for swipe down
+                    if (bottomBar.height !== bar_height) {
+                        bottomBar.height = bottomBar.height / 2
+                        collapseTimer.stop()
+                    }
+                }
+            }
+        }
     }
 
     Rectangle {
@@ -92,14 +112,14 @@ Rectangle {
             anchors.fill: parent
             onClicked: {
                 zoneModel.increaseTemperature(1)
-                /*if(zoneModel === hvacHandler.driverZone) {
+                if(zoneModel === hvacHandler.driverZone) {
                     if(hvacHandler.syncEnabled) {
                         hvacHandler.passengerZone.temperature = hvacHandler.driverZone.temperature
                     }
                 }
                 else {
                     hvacHandler.syncEnabled = false
-                }*/
+                }
             }
             cursorShape: Qt.PointingHandCursor
         }

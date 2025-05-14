@@ -4,7 +4,7 @@ HVACHandler::HVACHandler(QObject *parent)
     : QObject(parent),
       m_ACEnabled(false),
       m_syncEnabled(false),
-      m_airFromOutside(true),
+      m_airFromOutside(false),
       m_rearHeater(false),
       m_maxAC(false),
       m_maxHeat(false),
