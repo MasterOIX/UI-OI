@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtLocation 5.12
 import QtPositioning 5.12
+import QtGraphicalEffects 1.0
 
 Rectangle {
     id: rightScreen
@@ -18,7 +19,14 @@ Rectangle {
     }
 
     Map {
-        anchors.fill: parent
+        anchors {
+            top: parent.top
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            bottomMargin: -20
+        }
+
         plugin: mapPlugin
         center: QtPositioning.coordinate(44.20147691467647, 26.19891163624485) // Colibasi
         zoomLevel: 13
@@ -27,4 +35,9 @@ Rectangle {
     NavigationSearchBox {
         id: navigationSearchBox
     }
+
+    MediaPlayer {
+        id: mediaPlayer
+    }
+
 }

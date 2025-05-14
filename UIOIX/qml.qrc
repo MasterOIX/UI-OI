@@ -37,5 +37,12 @@
         <file>UI/assests/seat.png</file>
         <file>UI/assests/seat_p.png</file>
         <file>UI/BottomBar/SeatHeaterIndicator.qml</file>
+        <file>UI/RightScreen/MediaPlayer.qml</file>
+        <file>UI/assests/media.jpg</file>
+        <file>UI/assests/next.png</file>
+        <file>UI/assests/pause.png</file>
+        <file>UI/assests/play.png</file>
+        <file>UI/assests/previous.png</file>
+        <file>UI/assests/mode.png</file>
     </qresource>
 </RCC>

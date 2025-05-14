@@ -14,7 +14,8 @@ public:
     void setVolume(int newVolume);
 
     Q_INVOKABLE void increaseVolume(const int &value);
-
+    Q_INVOKABLE void playRadioStream(const QString &url);
+    Q_INVOKABLE void stopRadioStream();
 
 signals:
     void volumeChanged(int volume);
