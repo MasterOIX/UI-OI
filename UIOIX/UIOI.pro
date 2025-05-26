@@ -6,18 +6,30 @@ QT += quick qml quickcontrols2 location positioning opengl
 
 SOURCES += \
         Controllers/audiocontroller.cpp \
+        Controllers/audiosourcemanager.cpp \
+        Controllers/bluetoothaudiosource.cpp \
         Controllers/hvachandler.cpp \
+        Controllers/onlineradioaudiosource.cpp \
+        Controllers/radioaudiosource.cpp \
+        Controllers/settingsmanager.cpp \
+        Controllers/storageaudiosource.cpp \
         Controllers/system.cpp \
         Controllers/zonecontroller.cpp \
         main.cpp
 
 RESOURCES += qml.qrc
+LIBS += -lasound
 
 TRANSLATIONS += \
     UIOI_ro_RO.ts
 CONFIG += lrelease
 CONFIG += embed_translations
 CONFIG += c++17
+CONFIG += link_pkgconfig
+
+PKGCONFIG += \
+    gstreamer-1.0 \
+    gstreamer-base-1.0
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -32,6 +44,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Controllers/audiocontroller.h \
+    Controllers/audiosource.h \
+    Controllers/audiosourcemanager.h \
+    Controllers/bluetoothaudiosource.h \
     Controllers/hvachandler.h \
+    Controllers/onlineradioaudiosource.h \
+    Controllers/radioaudiosource.h \
+    Controllers/settingsmanager.h \
+    Controllers/storageaudiosource.h \
     Controllers/system.h \
     Controllers/zonecontroller.h

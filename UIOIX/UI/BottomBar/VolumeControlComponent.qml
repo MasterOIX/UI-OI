@@ -63,10 +63,6 @@ Rectangle {
             running: false
             onTriggered: {
                 audioController.increaseVolume(5)
-                if (audioController.volume > 50) {
-                    audioController.playRadioStream("http://stream.radioparadise.com/rock-128")
-                }
-
                 showVolumeTextTemporarily()
             }
         }

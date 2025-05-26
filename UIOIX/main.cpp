@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     qmlRegisterUncreatableType<ZoneController>("HVAC", 1, 0, "ZoneController", "Accessed via HVACHandler");
+    qmlRegisterUncreatableType<AudioController>("Audio", 1, 0, "AudioController", "Enum only");
+
 
     System m_system_handler;
     HVACHandler m_hvac_handler;
