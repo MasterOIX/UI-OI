@@ -1,8 +1,12 @@
 import QtQuick 2.12
 import QtGraphicalEffects 1.0
 import Audio 1.0
+import QtQuick.Controls 2.12
 
 Item {
+    property real startY: 0
+    property bool isListVisible: false
+
     anchors {
         bottom: parent.bottom
         left: parent.left
@@ -306,5 +310,111 @@ Item {
             height: width
             fillMode: Image.PreserveAspectFit
         }
+
+        Image {
+            id: listOpener
+            source: "qrc:/UI/assests/open.png"
+            anchors {
+                top: parent.top
+                topMargin: -5
+                left: nextIcon.right
+                leftMargin: 13
+            }
+            width: 32
+            height: width
+            fillMode: Image.PreserveAspectFit
+
+            MouseArea {
+                anchors.centerIn: parent
+                width: 60
+                height: 32
+                onPressed: {
+                    startY = mouse.y
+                }
+
+                onReleased: {
+                    var deltaY = startY - mouse.y
+                    if (deltaY > 50) { // threshold for swipe up
+                        isListVisible = true
+                        hideListTimer.start()
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        id: listViewer
+        visible: isListVisible
+        opacity: visible ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: 300 } }
+        anchors {
+            bottom: baseRect.top
+            bottomMargin: 10
+            right: parent.right
+            rightMargin: 10
+        }
+        width: 220
+        height: 250
+        radius: 10
+        color: Qt.rgba(0.94, 0.94, 0.94, 0.95)
+        border.color: "#cccccc"
+
+        MouseArea {
+           anchors.fill: parent
+           hoverEnabled: true
+           onEntered: hideListTimer.stop()
+           onExited: hideListTimer.start()
+       }
+
+        property int selectedIndex: -1
+
+        ListView {
+            id: audioListView
+            anchors.fill: parent
+            spacing: 4
+            clip: true
+            model: audioController.audioList
+
+            delegate: Rectangle {
+                width: parent.width
+                height: 40
+                radius: 5
+                color: "transparent"
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        listViewer.selectedIndex = index
+                        audioController.selectFromList(index)
+                    }
+                }
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    width: parent.width - 20
+                    text: modelData
+                    font.pixelSize: 14
+                    color: "black"
+                    elide: Text.ElideRight
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AsNeeded
+                width: 6
+            }
+        }
+    }
+
+    Timer {
+        id: hideListTimer
+        interval: 3000
+        running: false
+        repeat: false
+        onTriggered: isListVisible = false
     }
 }

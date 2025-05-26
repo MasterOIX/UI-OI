@@ -18,6 +18,7 @@ class AudioController : public QObject
     Q_PROPERTY(QString currentTitle READ currentTitle NOTIFY metadataChanged)
     Q_PROPERTY(QString currentArtist READ currentArtist NOTIFY metadataChanged)
     Q_PROPERTY(QString currentAlbum READ currentAlbum NOTIFY metadataChanged)
+    Q_PROPERTY(QStringList audioList READ audioList NOTIFY audioListChanged)
 
 public:
     explicit AudioController(QObject *parent = nullptr);
@@ -51,6 +52,7 @@ public:
     Q_INVOKABLE int getSystemVolume() const;
     Q_INVOKABLE void togglePlayPause();
     Q_INVOKABLE void printPlaybackStatus();
+    Q_INVOKABLE void selectFromList(int index);
 
     QStringList localSongs() const;
 
@@ -62,6 +64,8 @@ public:
     QString currentArtist() const;
     QString currentAlbum() const;
 
+    QStringList audioList() const;
+
 signals:
     void volumeChanged(int volume);
     void modeChanged();
@@ -71,12 +75,15 @@ signals:
     void playbackInfoChanged();
     void metadataChanged();
 
+    void audioListChanged();
+
 private:
     int m_volume;
     QStringList m_localSongs;
     AudioSourceManager *m_sourceManager;
     bool m_isPlaying;
     QTimer *m_positionTimer;
+    QStringList m_audioList;
 };
 
 #endif // AUDIOCONTROLLER_H

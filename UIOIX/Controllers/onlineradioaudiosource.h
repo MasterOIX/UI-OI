@@ -27,6 +27,8 @@ public:
     QString title() const override;
     QString artist() const override;
     QString album() const override;
+    QStringList list() const override;
+    void playAt(int index) override;
 
 private:
     QList<RadioStation> stations;

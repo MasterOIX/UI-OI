@@ -152,6 +152,7 @@ void AudioController::setMode(PlaybackMode newMode) {
     emit modeChanged();
     emit playbackInfoChanged();
     emit metadataChanged();
+    emit audioListChanged();
     setIsPlaying(true);
 
     QSettings settings("UIOIX", "UIOIApp");
@@ -283,3 +284,19 @@ QString AudioController::currentAlbum() const {
     return m_sourceManager->currentSource() ? m_sourceManager->currentSource()->album() : "No album";
 }
 
+
+QStringList AudioController::audioList() const
+{
+    if (m_sourceManager && m_sourceManager->currentSource())
+        return m_sourceManager->currentSource()->list();
+    return {};
+}
+
+void AudioController::selectFromList(int index) {
+    if (m_sourceManager && m_sourceManager->currentSource()) {
+        m_sourceManager->currentSource()->playAt(index);
+        setIsPlaying(true);
+        emit playbackInfoChanged();
+        emit metadataChanged();
+    }
+}

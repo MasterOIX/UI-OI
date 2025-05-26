@@ -46,3 +46,8 @@ QString RadioAudioSource::album() const {
     return "Bluetooth Audio";
 }
 
+void RadioAudioSource::playAt(int index) {
+    Q_UNUSED(index);
+    qDebug() << "Bluetooth: Play at index is not applicable";
+}
+

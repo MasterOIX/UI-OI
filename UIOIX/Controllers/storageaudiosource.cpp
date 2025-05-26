@@ -181,3 +181,19 @@ QString StorageAudioSource::artist() const {
 QString StorageAudioSource::album() const {
     return m_album.isEmpty() ? "No album" : m_album;
 }
+
+QStringList StorageAudioSource::list() const {
+    QStringList list;
+    for (const QString &song : m_songs) {
+        QFileInfo info(song);
+        list << info.baseName(); // just filename without path or extension
+    }
+    return list;
+}
+
+void StorageAudioSource::playAt(int index) {
+    if (index >= 0 && index < m_songs.size()) {
+        currentIndex = index;
+        play();
+    }
+}

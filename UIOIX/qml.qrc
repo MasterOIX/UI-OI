@@ -48,5 +48,6 @@
         <file>UI/assests/fm.png</file>
         <file>UI/assests/storage.png</file>
         <file>UI/assests/webradio.png</file>
+        <file>UI/assests/open.png</file>
     </qresource>
 </RCC>

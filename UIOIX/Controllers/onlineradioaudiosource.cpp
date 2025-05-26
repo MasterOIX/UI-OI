@@ -100,3 +100,17 @@ QString OnlineRadioAudioSource::album() const {
     return stations.value(currentIndex).name;
 }
 
+QStringList OnlineRadioAudioSource::list() const {
+    QStringList names;
+    for (const auto& station : stations) {
+        names << station.name;
+    }
+    return names;
+}
+
+void OnlineRadioAudioSource::playAt(int index) {
+    if (index >= 0 && index < stations.size()) {
+        currentIndex = index;
+        play();
+    }
+}

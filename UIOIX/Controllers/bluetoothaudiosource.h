@@ -19,6 +19,8 @@ public:
     QString title() const override;
     QString artist() const override;
     QString album() const override;
+    QStringList list() const override { return {}; }
+    void playAt(int index) override;
 };
 
 #endif // BLUETOOTHAUDIOSOURCE_H

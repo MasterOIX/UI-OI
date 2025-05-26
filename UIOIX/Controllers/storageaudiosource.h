@@ -21,6 +21,8 @@ public:
     QString title() const override;
     QString artist() const override;
     QString album() const override;
+    QStringList list() const override;
+    void playAt(int index) override;
 
     void scanLocalMusic(const QString &path);
     QStringList songList() const;
