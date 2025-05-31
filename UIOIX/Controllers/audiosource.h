@@ -22,6 +22,7 @@ public:
     virtual QString album() const = 0;
     virtual QStringList list() const = 0;
     virtual void playAt(int index) = 0;
+    virtual void setVolume(int volumePercent) = 0;
 };
 
 #endif // AUDIOSOURCE_H

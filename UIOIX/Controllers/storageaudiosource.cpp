@@ -18,7 +18,7 @@ void StorageAudioSource::scanLocalMusic(const QString &path)
     QStringList files = dir.entryList(filters, QDir::Files, QDir::Name);
 
     m_songs.clear();
-    for (const auto &song : files) {
+    for (const QString &song : files) {
         m_songs << dir.absoluteFilePath(song);
     }
 
@@ -28,6 +28,17 @@ void StorageAudioSource::scanLocalMusic(const QString &path)
 
 QStringList StorageAudioSource::songList() const {
     return m_songs;
+}
+
+void StorageAudioSource::setVolume(int volumePercent)
+{
+    if (!m_player) return;
+
+    // Convert 0–100 to 0.0–1.0
+    double volume = qBound(0, volumePercent, 100) / 100.0;
+
+    g_object_set(G_OBJECT(m_player), "volume", volume, nullptr);
+    qDebug() << "[GStreamer] Volume set to:" << volume << "(" << volumePercent << "%)";
 }
 
 void StorageAudioSource::next() {

@@ -336,6 +336,8 @@ Item {
                     var deltaY = startY - mouse.y
                     if (deltaY > 50) { // threshold for swipe up
                         isListVisible = true
+
+                        if (hideListTimer.running) hideListTimer.stop();
                         hideListTimer.start()
                     }
                 }

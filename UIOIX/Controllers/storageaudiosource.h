@@ -26,6 +26,7 @@ public:
 
     void scanLocalMusic(const QString &path);
     QStringList songList() const;
+    void setVolume(int volumePercent) override;
 
 public slots:
     void next() override;

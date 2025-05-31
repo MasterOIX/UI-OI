@@ -21,6 +21,7 @@ public:
     QString album() const override;
     QStringList list() const override { return {}; }
     void playAt(int index) override;
+    void setVolume(int volumePercent) override;
 };
 
 #endif // BLUETOOTHAUDIOSOURCE_H

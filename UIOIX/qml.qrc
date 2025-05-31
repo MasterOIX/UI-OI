@@ -49,5 +49,10 @@
         <file>UI/assests/storage.png</file>
         <file>UI/assests/webradio.png</file>
         <file>UI/assests/open.png</file>
+        <file>UI/RightScreen/MapScreen.qml</file>
+        <file>UI/assests/navigation.png</file>
+        <file>UI/RightScreen/Indications.qml</file>
+        <file>UI/assests/pin.png</file>
+        <file>UI/assests/close.png</file>
     </qresource>
 </RCC>

@@ -51,3 +51,8 @@ void RadioAudioSource::playAt(int index) {
     qDebug() << "Bluetooth: Play at index is not applicable";
 }
 
+void RadioAudioSource::setVolume(int volumePercent)
+{
+
+}
+

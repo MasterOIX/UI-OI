@@ -12,6 +12,7 @@
 #include <Controllers/hvachandler.h>
 #include <Controllers/audiocontroller.h>
 #include <Controllers/zonecontroller.h>
+#include <Controllers/valhallacontroller.h>
 
 int main(int argc, char *argv[])
 {
@@ -27,11 +28,13 @@ int main(int argc, char *argv[])
 
     qmlRegisterUncreatableType<ZoneController>("HVAC", 1, 0, "ZoneController", "Accessed via HVACHandler");
     qmlRegisterUncreatableType<AudioController>("Audio", 1, 0, "AudioController", "Enum only");
+    qmlRegisterType<ValhallaController>("Controllers", 1, 0, "ValhallaController");
 
 
     System m_system_handler;
     HVACHandler m_hvac_handler;
     AudioController m_audio_controller;
+    ValhallaController m_valhalla_controller;
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -49,6 +52,7 @@ int main(int argc, char *argv[])
     context->setContextProperty("systemHandler", &m_system_handler);
     context->setContextProperty("hvacHandler", &m_hvac_handler);
     context->setContextProperty("audioController", &m_audio_controller);
+    context->setContextProperty("valhalla_controller", &m_valhalla_controller);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(
@@ -61,11 +65,5 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection);
     engine.load(url);
-
-    qDebug() << "Supports SSL:" << QSslSocket::supportsSsl();
-    qDebug() << "Build version:" << QSslSocket::sslLibraryBuildVersionString();
-    qDebug() << "Runtime version:" << QSslSocket::sslLibraryVersionString();
-
-
     return app.exec();
 }

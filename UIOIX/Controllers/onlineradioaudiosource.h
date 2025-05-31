@@ -29,6 +29,7 @@ public:
     QString album() const override;
     QStringList list() const override;
     void playAt(int index) override;
+    void setVolume(int volumePercent) override;
 
 private:
     QList<RadioStation> stations;

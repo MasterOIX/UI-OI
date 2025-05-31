@@ -300,3 +300,16 @@ void AudioController::selectFromList(int index) {
         emit metadataChanged();
     }
 }
+
+int AudioController::sourceVolume() const
+{
+    return m_sourceVolume;
+}
+
+void AudioController::setSourceVolume(int newSourceVolume)
+{
+    if (m_sourceVolume == newSourceVolume)
+        return;
+    m_sourceVolume = newSourceVolume;
+    emit sourceVolumeChanged();
+}

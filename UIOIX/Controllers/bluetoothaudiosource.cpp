@@ -48,3 +48,8 @@ void BluetoothAudioSource::playAt(int index) {
     Q_UNUSED(index);
     qDebug() << "Bluetooth: Play at index is not applicable";
 }
+
+void BluetoothAudioSource::setVolume(int volumePercent)
+{
+
+}

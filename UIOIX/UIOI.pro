@@ -1,4 +1,4 @@
-QT += quick qml quickcontrols2 location positioning opengl
+QT += quick qml quickcontrols2 location positioning opengl network core # texttospeech
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -14,11 +14,13 @@ SOURCES += \
         Controllers/settingsmanager.cpp \
         Controllers/storageaudiosource.cpp \
         Controllers/system.cpp \
+        Controllers/valhallacontroller.cpp \
         Controllers/zonecontroller.cpp \
         main.cpp
 
 RESOURCES += qml.qrc
 LIBS += -lasound
+LIBS += -lm
 
 TRANSLATIONS += \
     UIOI_ro_RO.ts
@@ -53,4 +55,5 @@ HEADERS += \
     Controllers/settingsmanager.h \
     Controllers/storageaudiosource.h \
     Controllers/system.h \
+    Controllers/valhallacontroller.h \
     Controllers/zonecontroller.h
