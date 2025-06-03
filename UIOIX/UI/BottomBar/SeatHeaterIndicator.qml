@@ -17,7 +17,17 @@ Item {
         fillMode: Image.PreserveAspectFit
 
         MouseArea {
-            anchors.fill: parent
+            anchors {
+                top: parent.top
+                topMargin: -20
+                bottom: parent.bottom
+                bottomMargin: -30
+                left: parent.left
+                leftMargin: -15
+                right: parent.right
+                rightMargin: -15
+            }
+
             onClicked: {
                 zone.increaseSeatHeating()
             }

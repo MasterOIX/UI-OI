@@ -185,6 +185,8 @@ Item {
         anchors {
             left: imageRect.right
             leftMargin: 8
+            right: controlsRect.left
+            rightMargin: 8
             top: songContainer.bottom
             topMargin: 5
         }
@@ -193,6 +195,10 @@ Item {
         font.pixelSize: 14
         font.bold: true
         font.family: "Arial"
+        elide: Text.ElideRight
+        wrapMode: Text.NoWrap
+        horizontalAlignment: Text.AlignLeft
+        clip: true
     }
 
     Text {
@@ -200,6 +206,8 @@ Item {
         anchors {
             left: imageRect.right
             leftMargin: 8
+            right: controlsRect.left
+            rightMargin: 8
             top: artistName.bottom
             topMargin: 5
         }
@@ -207,6 +215,7 @@ Item {
         font.pixelSize: 12
         font.family: "Arial"
         color: "gray"
+        elide: Text.ElideRight
     }
 
     Rectangle {
@@ -229,7 +238,9 @@ Item {
             height: width
             fillMode: Image.PreserveAspectFit
             MouseArea {
-                anchors.fill: parent
+                anchors.centerIn: parent
+                width: parent.width
+                height: parent.height
                 onClicked: {
                     audioController.previous()
                 }
@@ -248,7 +259,9 @@ Item {
             height: width
             fillMode: Image.PreserveAspectFit
             MouseArea {
-                anchors.fill: parent
+                anchors.centerIn: parent
+                width: parent.width
+                height: parent.height
                 onClicked: {
                     audioController.togglePlayPause()
                 }
@@ -268,7 +281,9 @@ Item {
             fillMode: Image.PreserveAspectFit
 
             MouseArea {
-                anchors.fill: parent
+                anchors.centerIn: parent
+                width: parent.width
+                height: parent.height
                 onClicked: {
                     audioController.next()
                 }
@@ -287,7 +302,9 @@ Item {
             height: width
             fillMode: Image.PreserveAspectFit
             MouseArea {
-                anchors.fill: parent
+                anchors.centerIn: parent
+                width: parent.width
+                height: parent.height
                 onClicked: {
                     audioController.toggleMode()
                 }

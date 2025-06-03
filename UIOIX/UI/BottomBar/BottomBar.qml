@@ -13,7 +13,7 @@ Rectangle {
         right: parent.right
     }
     height: parent.height / 11
-    color: "black"
+    color: "#2d2d2d"
 
     GlowingLine {
         id: glowLine
@@ -41,6 +41,20 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
         source: "qrc:/UI/assests/car_front_icon.png"
         visible: parent.height < bar_height * 1.25
+
+        MouseArea {
+            anchors.centerIn: parent
+            width: parent.width
+            height: parent.height
+
+            onClicked: {
+                if (menu.visible) {
+                    menu.visible = false
+                } else {
+                    menu.visible = true
+                }
+            }
+        }
     }
 
     VolumeControlComponent {

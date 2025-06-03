@@ -7,15 +7,82 @@
 
 #include <QSslSocket>
 #include <QDebug>
+#include <QtDBus/QDBusMetaType>
+#include <QtDBus/QDBusObjectPath>
+#include <QMap>
+#include <QVariantMap>
+
 
 #include <Controllers/system.h>
 #include <Controllers/hvachandler.h>
 #include <Controllers/audiocontroller.h>
 #include <Controllers/zonecontroller.h>
 #include <Controllers/valhallacontroller.h>
+#include <Controllers/wificontroller.h>
+#include <Controllers/bluetoothcontroller.h>
+
+QDBusArgument &operator<<(QDBusArgument &argument, const QMap<QString, QVariantMap> &map)
+{
+    argument.beginMap(qMetaTypeId<QString>(), qMetaTypeId<QVariantMap>());
+    for (auto it = map.begin(); it != map.end(); ++it) {
+        argument.beginMapEntry();
+        argument << it.key() << it.value();
+        argument.endMapEntry();
+    }
+    argument.endMap();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, QMap<QString, QVariantMap> &map)
+{
+    map.clear();
+    argument.beginMap();
+    while (!argument.atEnd()) {
+        QString key;
+        QVariantMap value;
+        argument.beginMapEntry();
+        argument >> key >> value;
+        argument.endMapEntry();
+        map.insert(key, value);
+    }
+    argument.endMap();
+    return argument;
+}
+
+// For QMap<QDBusObjectPath, QMap<QString, QVariantMap>>
+QDBusArgument &operator<<(QDBusArgument &argument, const QMap<QDBusObjectPath, QMap<QString, QVariantMap>> &map)
+{
+    argument.beginMap(qMetaTypeId<QDBusObjectPath>(), qMetaTypeId<QMap<QString, QVariantMap>>());
+    for (auto it = map.begin(); it != map.end(); ++it) {
+        argument.beginMapEntry();
+        argument << it.key() << it.value();
+        argument.endMapEntry();
+    }
+    argument.endMap();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, QMap<QDBusObjectPath, QMap<QString, QVariantMap>> &map)
+{
+    map.clear();
+    argument.beginMap();
+    while (!argument.atEnd()) {
+        QDBusObjectPath key;
+        QMap<QString, QVariantMap> value;
+        argument.beginMapEntry();
+        argument >> key >> value;
+        argument.endMapEntry();
+        map.insert(key, value);
+    }
+    argument.endMap();
+    return argument;
+}
 
 int main(int argc, char *argv[])
 {
+    qDBusRegisterMetaType<QMap<QString, QVariantMap>>();
+    qDBusRegisterMetaType<QMap<QDBusObjectPath, QMap<QString, QVariantMap>>>();
+
     if (qEnvironmentVariableIsEmpty("QTGLESSTREAM_DISPLAY")) {
         qputenv("QT_QPA_EGLFS_PHYSICAL_WIDTH", QByteArray("213"));
         qputenv("QT_QPA_EGLFS_PHYSICAL_HEIGHT", QByteArray("120"));
@@ -24,6 +91,7 @@ int main(int argc, char *argv[])
         QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     }
+
     QGuiApplication app(argc, argv);
 
     qmlRegisterUncreatableType<ZoneController>("HVAC", 1, 0, "ZoneController", "Accessed via HVACHandler");
@@ -33,8 +101,10 @@ int main(int argc, char *argv[])
 
     System m_system_handler;
     HVACHandler m_hvac_handler;
-    AudioController m_audio_controller;
+    BluetoothController m_bluetooth_controller;
+    AudioController m_audio_controller(&m_bluetooth_controller);
     ValhallaController m_valhalla_controller;
+    WiFiController m_wifi_controller;
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -53,6 +123,8 @@ int main(int argc, char *argv[])
     context->setContextProperty("hvacHandler", &m_hvac_handler);
     context->setContextProperty("audioController", &m_audio_controller);
     context->setContextProperty("valhalla_controller", &m_valhalla_controller);
+    context->setContextProperty("wifiController", &m_wifi_controller);
+    context->setContextProperty("bluetoothController", &m_bluetooth_controller);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(

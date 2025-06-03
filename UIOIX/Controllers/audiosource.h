@@ -1,4 +1,3 @@
-
 #ifndef AUDIOSOURCE_H
 #define AUDIOSOURCE_H
 
@@ -23,6 +22,10 @@ public:
     virtual QStringList list() const = 0;
     virtual void playAt(int index) = 0;
     virtual void setVolume(int volumePercent) = 0;
+
+signals:
+    void metadataChanged();
+    void playbackInfoChanged();
 };
 
 #endif // AUDIOSOURCE_H

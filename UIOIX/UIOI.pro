@@ -1,4 +1,4 @@
-QT += quick qml quickcontrols2 location positioning opengl network core # texttospeech
+QT += quick qml quickcontrols2 location positioning opengl network core dbus # texttospeech
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -8,6 +8,7 @@ SOURCES += \
         Controllers/audiocontroller.cpp \
         Controllers/audiosourcemanager.cpp \
         Controllers/bluetoothaudiosource.cpp \
+        Controllers/bluetoothcontroller.cpp \
         Controllers/hvachandler.cpp \
         Controllers/onlineradioaudiosource.cpp \
         Controllers/radioaudiosource.cpp \
@@ -15,6 +16,8 @@ SOURCES += \
         Controllers/storageaudiosource.cpp \
         Controllers/system.cpp \
         Controllers/valhallacontroller.cpp \
+        Controllers/wificontroller.cpp \
+        Controllers/wifinetwork.cpp \
         Controllers/zonecontroller.cpp \
         main.cpp
 
@@ -49,6 +52,8 @@ HEADERS += \
     Controllers/audiosource.h \
     Controllers/audiosourcemanager.h \
     Controllers/bluetoothaudiosource.h \
+    Controllers/bluetoothcontroller.h \
+    Controllers/bluezagent.h \
     Controllers/hvachandler.h \
     Controllers/onlineradioaudiosource.h \
     Controllers/radioaudiosource.h \
@@ -56,4 +61,6 @@ HEADERS += \
     Controllers/storageaudiosource.h \
     Controllers/system.h \
     Controllers/valhallacontroller.h \
+    Controllers/wificontroller.h \
+    Controllers/wifinetwork.h \
     Controllers/zonecontroller.h

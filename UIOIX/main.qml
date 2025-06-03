@@ -4,6 +4,7 @@ import "UI/BottomBar"
 import "UI/RightScreen"
 import "UI/LeftScreen"
 import "UI/TopBar"
+import "UI/Menu"
 
 Window {
     width: 1024
@@ -26,6 +27,10 @@ Window {
 
     BottomBar {
         id: bottomBar
+    }
+
+    Menu {
+        id: menu
     }
 
 }

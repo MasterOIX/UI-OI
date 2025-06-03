@@ -1,9 +1,11 @@
 #include "audiosourcemanager.h"
 
-AudioSourceManager::AudioSourceManager(QObject *parent)
+AudioSourceManager::AudioSourceManager(BluetoothController* btController, QObject *parent)
     : QObject(parent)
 {
     m_current = nullptr;  // Do not set or play anything at startup
+    connect(btController, &BluetoothController::bluetoothMediaPlayerPathChanged,
+            &m_bt, &BluetoothAudioSource::setBluezDevicePath);
 }
 
 void AudioSourceManager::nextSource() {
@@ -21,8 +23,17 @@ void AudioSourceManager::setMode(PlaybackMode mode) {
     m_mode = mode;
     updateSourcePointer();
 
-    if (m_current)
+    if (m_current) {
+        // connect signals to propagate up
+        connect(m_current, &AudioSource::metadataChanged, this, [this]() {
+            emit metadataChanged();
+        });
+        connect(m_current, &AudioSource::playbackInfoChanged, this, [this]() {
+            emit playbackInfoChanged();
+        });
+
         m_current->play();
+    }
 }
 
 AudioSourceManager::PlaybackMode AudioSourceManager::currentMode() const {
@@ -41,4 +52,3 @@ void AudioSourceManager::updateSourcePointer() {
     case Bluetooth: m_current = &m_bt; break;
     }
 }
-

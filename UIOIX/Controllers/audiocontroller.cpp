@@ -1,5 +1,5 @@
 #include "audiocontroller.h"
-#include "audiosourcemanager.h"
+#include "Controllers/bluetoothcontroller.h"
 #include <alsa/asoundlib.h>
 #include <QProcess>
 #include <QSettings>
@@ -9,12 +9,19 @@
 
 QProcess *mpvProcess = nullptr;
 
-AudioController::AudioController(QObject *parent)
+AudioController::AudioController(BluetoothController* btController, QObject* parent)
     : QObject(parent),
     m_volume(0),
-    m_sourceManager(new AudioSourceManager(this)),
-    m_isPlaying(true)
+    m_isPlaying(true),
+    m_bt(this)
 {
+    m_positionTimer = new QTimer(this);
+    connect(m_positionTimer, &QTimer::timeout, this, [this]() {
+        emit playbackInfoChanged();
+        printPlaybackStatus();
+    });
+    m_sourceManager = new AudioSourceManager(btController, this);
+
     int sysVol = getSystemVolume();
     setVolume(sysVol >= 0 ? sysVol : 50);
 
@@ -28,12 +35,9 @@ AudioController::AudioController(QObject *parent)
 
     setMode(restoredMode);
 
-    m_positionTimer = new QTimer(this);
-    connect(m_positionTimer, &QTimer::timeout, this, [this]() {
-        emit playbackInfoChanged();
-        printPlaybackStatus();
-    });
-    m_positionTimer->start(1000);
+    // Connect metadata and playback info signals from AudioSourceManager
+    connect(m_sourceManager, &AudioSourceManager::metadataChanged, this, &AudioController::metadataChanged);
+    connect(m_sourceManager, &AudioSourceManager::playbackInfoChanged, this, &AudioController::playbackInfoChanged);
 }
 
 AudioController::~AudioController() {
@@ -150,10 +154,17 @@ void AudioController::setMode(PlaybackMode newMode) {
     }
 
     emit modeChanged();
-    emit playbackInfoChanged();
     emit metadataChanged();
+    emit playbackInfoChanged();
     emit audioListChanged();
     setIsPlaying(true);
+
+    if (newMode == Storage || newMode == Bluetooth)  {
+        m_positionTimer->start(1000);
+    } else {
+        m_positionTimer->stop();
+    }
+
 
     QSettings settings("UIOIX", "UIOIApp");
     QString modeStr;
@@ -190,8 +201,8 @@ void AudioController::next() {
     if (m_sourceManager->currentSource()) {
         m_sourceManager->currentSource()->next();
         setIsPlaying(true);
-        emit playbackInfoChanged();
         emit metadataChanged();
+        emit playbackInfoChanged();
     }
 }
 
@@ -199,8 +210,8 @@ void AudioController::previous() {
     if (m_sourceManager->currentSource()) {
         m_sourceManager->currentSource()->previous();
         setIsPlaying(true);
-        emit playbackInfoChanged();
         emit metadataChanged();
+        emit playbackInfoChanged();
     }
 }
 
@@ -239,7 +250,7 @@ double AudioController::position() const {
     if (m_sourceManager && m_sourceManager->currentSource()) {
         qint64 pos = 0;
         if (m_sourceManager->currentSource()->queryPosition(pos))
-            return pos / 1e9;
+            return pos;
     }
     return 0;
 }
@@ -248,7 +259,7 @@ double AudioController::duration() const {
     if (m_sourceManager && m_sourceManager->currentSource()) {
         qint64 dur = 0;
         if (m_sourceManager->currentSource()->queryDuration(dur))
-            return dur / 1e9;
+            return dur;
     }
     return 0;
 }
@@ -264,8 +275,8 @@ void AudioController::printPlaybackStatus() {
         m_sourceManager->currentSource()->queryDuration(dur) &&
         dur > 0)
     {
-        double posSec = pos / 1e9;
-        double durSec = dur / 1e9;
+        double posSec = pos;
+        double durSec = dur;
         double percent = (posSec * 100.0) / durSec;
 
         qDebug().nospace()
@@ -283,7 +294,6 @@ QString AudioController::currentArtist() const {
 QString AudioController::currentAlbum() const {
     return m_sourceManager->currentSource() ? m_sourceManager->currentSource()->album() : "No album";
 }
-
 
 QStringList AudioController::audioList() const
 {

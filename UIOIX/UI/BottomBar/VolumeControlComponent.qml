@@ -40,7 +40,9 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
         source: "qrc:/UI/assests/plus.png"
         MouseArea {
-            anchors.fill: parent
+            anchors.centerIn: parent
+            width: parent.width * 2
+            height: width
             onClicked: {
                 audioController.increaseVolume(1)
                 showVolumeTextTemporarily()
@@ -124,7 +126,9 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
         source: "qrc:/UI/assests/minus.png"
         MouseArea {
-            anchors.fill: parent
+            anchors.centerIn: parent
+            width: parent.width * 2
+            height: width
             onClicked: {
                 audioController.increaseVolume(-1)
                 showVolumeTextTemporarily()

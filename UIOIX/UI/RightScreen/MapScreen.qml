@@ -14,14 +14,7 @@ Item {
     
     Map {
         id: map
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            left: parent.left
-            right: parent.right
-            bottomMargin: -20
-        }
-
+        anchors.fill: parent
         center: valhalla_controller.currentLocation ? valhalla_controller.currentLocation : QtPositioning.coordinate(44.2015, 26.1989)
         zoomLevel: 19
         plugin: mapPlugin
@@ -103,7 +96,7 @@ Item {
 
     Connections {
         target: valhalla_controller
-        onShapeIndexChanged: {
+        function onShapeIndexChanged() {
             console.log("🔄 Updating paths with shapeIndex:", valhalla_controller.shapeIndex)
             drivenPolyline.path = valhalla_controller.polylinePoints.slice(0, valhalla_controller.shapeIndex+1)
             remainingPolyline.path = valhalla_controller.polylinePoints.slice(valhalla_controller.shapeIndex)

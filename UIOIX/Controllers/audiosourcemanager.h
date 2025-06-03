@@ -2,6 +2,7 @@
 #ifndef AUDIOSOURCEMANAGER_H
 #define AUDIOSOURCEMANAGER_H
 
+#include "Controllers/bluetoothcontroller.h"
 #include "audiosource.h"
 #include "storageaudiosource.h"
 #include "radioaudiosource.h"
@@ -11,7 +12,7 @@
 class AudioSourceManager : public QObject {
     Q_OBJECT
 public:
-    explicit AudioSourceManager(QObject *parent = nullptr);
+    explicit AudioSourceManager(BluetoothController* btController, QObject *parent = nullptr);
 
     enum PlaybackMode {
         Radio,
@@ -26,6 +27,10 @@ public:
     PlaybackMode currentMode() const;
 
     AudioSource *currentSource() const;   // get currently active source
+
+signals:
+    void metadataChanged();
+    void playbackInfoChanged();
 
 private:
     PlaybackMode m_mode;

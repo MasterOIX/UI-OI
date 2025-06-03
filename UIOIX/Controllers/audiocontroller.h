@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include "Controllers/bluetoothcontroller.h"
 #include "audiosourcemanager.h"
 
 class AudioController : public QObject
@@ -14,7 +15,7 @@ class AudioController : public QObject
     Q_PROPERTY(QStringList localSongs READ localSongs NOTIFY localSongsChanged)
     Q_PROPERTY(bool isPlaying READ isPlaying WRITE setIsPlaying NOTIFY isPlayingChanged)
     Q_PROPERTY(double position READ position NOTIFY playbackInfoChanged)
-    Q_PROPERTY(double duration READ duration NOTIFY playbackInfoChanged)
+    Q_PROPERTY(double duration READ duration NOTIFY metadataChanged)
     Q_PROPERTY(QString currentTitle READ currentTitle NOTIFY metadataChanged)
     Q_PROPERTY(QString currentArtist READ currentArtist NOTIFY metadataChanged)
     Q_PROPERTY(QString currentAlbum READ currentAlbum NOTIFY metadataChanged)
@@ -22,7 +23,7 @@ class AudioController : public QObject
     Q_PROPERTY(int sourceVolume READ sourceVolume WRITE setSourceVolume NOTIFY sourceVolumeChanged FINAL)
 
 public:
-    explicit AudioController(QObject *parent = nullptr);
+    explicit AudioController(BluetoothController* btController, QObject* parent = nullptr);
     ~AudioController();
 
     enum PlaybackMode {
@@ -91,6 +92,7 @@ private:
     QTimer *m_positionTimer;
     QStringList m_audioList;
     int m_sourceVolume;
+    BluetoothAudioSource m_bt;
 };
 
 #endif // AUDIOCONTROLLER_H
