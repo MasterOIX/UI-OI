@@ -57,7 +57,7 @@
         <file>UI/Menu/Menu.qml</file>
         <file>UI/Menu/MenuList.qml</file>
         <file>UI/Menu/SubMenu.qml</file>
-        <file>UI/Menu/Connections.qml</file>
+        <file>UI/Menu/DeviceConnections.qml</file>
         <file>UI/Menu/Settings.qml</file>
         <file>UI/Menu/Media.qml</file>
         <file>UI/Menu/TripComputer.qml</file>

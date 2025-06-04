@@ -27,6 +27,9 @@ public:
     PlaybackMode currentMode() const;
 
     AudioSource *currentSource() const;   // get currently active source
+    StorageAudioSource* storageSource() {
+        return &m_storage;
+    }
 
 signals:
     void metadataChanged();

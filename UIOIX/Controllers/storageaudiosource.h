@@ -26,7 +26,9 @@ public:
 
     void scanLocalMusic(const QString &path);
     QStringList songList() const;
+    QString detectUsbPath() const;
     void setVolume(int volumePercent) override;
+    bool importFromUsb();
 
 public slots:
     void next() override;
@@ -35,6 +37,8 @@ signals:
     void songListChanged();
 
 private:
+    bool isMediaFile(const QString &filePath) const;
+
     QStringList m_songs;
     int currentIndex = 0;
     GstElement *m_player = nullptr;
@@ -42,6 +46,7 @@ private:
     QString m_title = "";
     QString m_artist = "";
     QString m_album = "";
+    QString m_currentPath = "";
 };
 
 #endif // STORAGEAUDIOSOURCE_H

@@ -21,6 +21,8 @@ class AudioController : public QObject
     Q_PROPERTY(QString currentAlbum READ currentAlbum NOTIFY metadataChanged)
     Q_PROPERTY(QStringList audioList READ audioList NOTIFY audioListChanged)
     Q_PROPERTY(int sourceVolume READ sourceVolume WRITE setSourceVolume NOTIFY sourceVolumeChanged FINAL)
+    Q_PROPERTY(QString usbPath READ usbPath NOTIFY usbPathChanged)
+
 
 public:
     explicit AudioController(BluetoothController* btController, QObject* parent = nullptr);
@@ -49,12 +51,14 @@ public:
     Q_INVOKABLE void previous();
     Q_INVOKABLE void pause();
 
-    Q_INVOKABLE void scanLocalMusic(const QString &path);
     Q_INVOKABLE void setSystemVolume(int volumePercent);
     Q_INVOKABLE int getSystemVolume() const;
     Q_INVOKABLE void togglePlayPause();
     Q_INVOKABLE void printPlaybackStatus();
     Q_INVOKABLE void selectFromList(int index);
+    Q_INVOKABLE void importFromUsb();
+    Q_INVOKABLE void scanLocalMusic(const QString &path);
+    Q_INVOKABLE void playFromLocal(int index);
 
     QStringList localSongs() const;
 
@@ -67,6 +71,7 @@ public:
     QString currentAlbum() const;
 
     QStringList audioList() const;
+    QString usbPath() const;
 
     int sourceVolume() const;
     void setSourceVolume(int newSourceVolume);
@@ -83,6 +88,7 @@ signals:
     void audioListChanged();
 
     void sourceVolumeChanged();
+    void usbPathChanged();
 
 private:
     int m_volume;

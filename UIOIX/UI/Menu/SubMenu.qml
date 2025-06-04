@@ -40,7 +40,7 @@ Rectangle {
 
         source: {
             switch (menuList.selectedItem) {
-            case "Connections": return "Connections.qml";
+            case "Connections": return "DeviceConnections.qml";
             case "Media": return "Media.qml";
             case "Settings": return "Settings.qml";
             case "Trip Computer": return "TripComputer.qml";

@@ -1,4 +1,6 @@
 #include "storageaudiosource.h"
+#include "qdiriterator.h"
+#include "qstandardpaths.h"
 #include <QUrl>
 #include <QDebug>
 #include <QDir>
@@ -6,25 +8,49 @@
 
 StorageAudioSource::StorageAudioSource(QObject *parent) : AudioSource(parent) {
     gst_init(nullptr, nullptr);
-    scanLocalMusic("/home/root/music");
+    scanLocalMusic(QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
+
 }
 
 void StorageAudioSource::scanLocalMusic(const QString &path)
 {
     QDir dir(path);
+    qDebug() << "[StorageAudioSource] Scanning local music in:" << path;
     if (!dir.exists()) return;
 
+    m_songs.clear();
+
+    // Save current path so you can navigate back
+    m_currentPath = dir.absolutePath();
+
+
+    // Add "⏎ ../" entry if we're not at the root
+    if (QStandardPaths::writableLocation(QStandardPaths::MusicLocation) != path) {
+        m_songs << ".."; // This will show as ⏎ ../ in QML
+    }
+
+    // Add folders that contain audio files
+    QStringList subDirs = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for (const QString &subDir : subDirs) {
+        QDir subPath(dir.filePath(subDir));
+        QStringList musicFiles = subPath.entryList({ "*.mp3", "*.wav", "*.flac", "*.ogg", "*.aac" }, QDir::Files);
+        if (!musicFiles.isEmpty()) {
+            m_songs << subPath.absolutePath();
+        }
+    }
+
+    // Add audio files in the current folder
     QStringList filters{ "*.mp3", "*.wav", "*.flac", "*.ogg", "*.aac" };
     QStringList files = dir.entryList(filters, QDir::Files, QDir::Name);
-
-    m_songs.clear();
-    for (const QString &song : files) {
+    for (const QString &song : std::as_const(files)) {
         m_songs << dir.absoluteFilePath(song);
     }
 
     currentIndex = 0;
     emit songListChanged();
 }
+
+
 
 QStringList StorageAudioSource::songList() const {
     return m_songs;
@@ -169,7 +195,7 @@ bool StorageAudioSource::queryDuration(qint64 &durationNs) const {
     if (!m_player) return false;
     gint64 rawDuration = 0;
     bool success = gst_element_query_duration(m_player, GST_FORMAT_TIME, &rawDuration);
-    durationNs = static_cast<qint64>(rawDuration);
+    durationNs = static_cast<qint64>(rawDuration)/ 1000000000; // Convert to milliseconds;
     return success;
 }
 
@@ -177,7 +203,7 @@ bool StorageAudioSource::queryPosition(qint64 &positionNs) const {
     if (!m_player) return false;
     gint64 rawPosition = 0;
     bool success = gst_element_query_position(m_player, GST_FORMAT_TIME, &rawPosition);
-    positionNs = static_cast<qint64>(rawPosition);
+    positionNs = static_cast<qint64>(rawPosition)/ 1000000000; // Convert to milliseconds;
     return success;
 }
 
@@ -197,7 +223,13 @@ QStringList StorageAudioSource::list() const {
     QStringList list;
     for (const QString &song : m_songs) {
         QFileInfo info(song);
-        list << info.baseName(); // just filename without path or extension
+        if (info.isFile()){
+            list << info.baseName(); // just filename without path or extension
+            qDebug() << "[StorageAudioSource] Adding song:" << info.baseName();
+        }
+        else {
+            list << song + " (folder)"; // treat directories as is
+        }
     }
     return list;
 }
@@ -208,3 +240,68 @@ void StorageAudioSource::playAt(int index) {
         play();
     }
 }
+
+bool StorageAudioSource::importFromUsb()
+{
+    QString usbPath = detectUsbPath();
+    if (usbPath.isEmpty()) return false;
+
+    QString targetDir = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
+    QDirIterator it(usbPath, QDirIterator::Subdirectories);
+    QStringList copied;
+
+    while (it.hasNext()) {
+        QString filePath = it.next();
+        qDebug() << "[StorageAudioSource] Found file:" << filePath;
+        if (!isMediaFile(filePath)) continue;
+
+        // Preserve relative path from usb root
+        QString relativePath = QDir(usbPath).relativeFilePath(filePath);
+        QString destPath = targetDir + "/" + relativePath;
+        qDebug() << "[StorageAudioSource] Copying to:" << destPath;
+
+        // Ensure destination directory exists
+        QDir().mkpath(QFileInfo(destPath).absolutePath());
+
+        if (!QFile::exists(destPath)) {
+            if (QFile::copy(filePath, destPath)) {
+                qDebug() << "[StorageAudioSource] Copied:" << filePath << "→" << destPath;
+                copied << destPath;
+            } else {
+                qWarning() << "[StorageAudioSource] Failed to copy:" << filePath << "→" << destPath;
+            }
+        } else {
+            qDebug() << "[StorageAudioSource] Skipped (already exists):" << destPath;
+        }
+
+    }
+
+    if (copied.isEmpty()) {
+        qWarning() << "[StorageAudioSource] No valid media files found on USB.";
+        return false;
+    }
+
+    m_songs = copied;
+    emit songListChanged();
+    scanLocalMusic(QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
+    return true;
+}
+
+QString StorageAudioSource::detectUsbPath() const
+{
+    QString basePath = "/mnt/usb";
+    QDir baseDir(basePath);
+    QStringList subDirs = baseDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    if (!subDirs.isEmpty()) {
+        return basePath;
+    }
+    return QString();
+}
+
+bool StorageAudioSource::isMediaFile(const QString &filePath) const
+{
+    QStringList validExtensions = { "mp3", "wav", "flac", "ogg", "aac" };
+    QFileInfo fileInfo(filePath);
+    return validExtensions.contains(fileInfo.suffix().toLower());
+}
+

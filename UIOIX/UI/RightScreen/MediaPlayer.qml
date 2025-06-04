@@ -396,8 +396,9 @@ Item {
             model: audioController.audioList
 
             delegate: Rectangle {
-                width: parent.width
-                height: 40
+                visible: !String(modelData).includes("(folder)")
+                width: listViewer.width
+                height: String(modelData).includes("(folder)") ? 0 : 40
                 radius: 5
                 color: "transparent"
 

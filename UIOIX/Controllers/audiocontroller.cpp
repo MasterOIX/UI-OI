@@ -180,21 +180,7 @@ void AudioController::setMode(PlaybackMode newMode) {
 }
 
 QStringList AudioController::localSongs() const {
-    return m_localSongs;
-}
-
-void AudioController::scanLocalMusic(const QString &path) {
-    QDir dir(path);
-    if (!dir.exists()) return;
-
-    QStringList filters { "*.mp3", "*.wav", "*.flac", "*.ogg", "*.aac" };
-    QStringList songs = dir.entryList(filters, QDir::Files, QDir::Name);
-
-    for (QString &song : songs)
-        song = path + "/" + song;
-
-    m_localSongs = songs;
-    emit localSongsChanged();
+    return m_sourceManager->storageSource()->songList();
 }
 
 void AudioController::next() {
@@ -311,6 +297,25 @@ void AudioController::selectFromList(int index) {
     }
 }
 
+QString AudioController::usbPath() const
+{
+    if (m_sourceManager)
+        return m_sourceManager->storageSource()->detectUsbPath();
+    return QString();
+}
+
+void AudioController::importFromUsb()
+{
+    if (m_sourceManager) {
+        bool result = m_sourceManager->storageSource()->importFromUsb();
+        if (result) {
+            emit localSongsChanged();
+        } else {
+            qWarning() << "Failed to import from USB";
+        }
+    }
+}
+
 int AudioController::sourceVolume() const
 {
     return m_sourceVolume;
@@ -322,4 +327,24 @@ void AudioController::setSourceVolume(int newSourceVolume)
         return;
     m_sourceVolume = newSourceVolume;
     emit sourceVolumeChanged();
+}
+
+void AudioController::scanLocalMusic(const QString &path)
+{
+    if (m_sourceManager) {
+        m_sourceManager->storageSource()->scanLocalMusic(path);
+        emit localSongsChanged();
+        if (m_sourceManager->currentSource() == m_sourceManager->storageSource()) {
+            emit audioListChanged();
+        }
+    }
+}
+
+void AudioController::playFromLocal(int index)
+{
+    if (m_sourceManager) {
+        if (m_sourceManager->currentSource() != m_sourceManager->storageSource())
+            setMode(Storage);
+        m_sourceManager->storageSource()->playAt(index);
+    }
 }

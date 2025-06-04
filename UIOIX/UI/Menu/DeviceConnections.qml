@@ -448,7 +448,7 @@ Rectangle {
     Connections {
         target: wifiController
 
-        onAvailableNetworksChanged: {
+        function onAvailableNetworksChanged() {
             wifiList.model = wifiController.availableNetworks;
         }
 
@@ -505,7 +505,7 @@ Rectangle {
 
     Connections {
         target: bluetoothController
-        onPairingPromptReceived: {
+        function onPairingPromptReceived() {
             console.log("Pairing prompt received:", prompt)
             pairingPromptDialog.text = prompt
             pairingPromptDialog.open()

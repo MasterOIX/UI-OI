@@ -1,4 +1,4 @@
-QT += quick qml quickcontrols2 location positioning opengl network core dbus # texttospeech
+QT += quick qml quickcontrols2 location positioning opengl network core dbus widgets # texttospeech
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
