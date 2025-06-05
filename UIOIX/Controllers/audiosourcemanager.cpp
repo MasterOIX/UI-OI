@@ -24,6 +24,7 @@ void AudioSourceManager::setMode(PlaybackMode mode) {
     updateSourcePointer();
 
     if (m_current) {
+        disconnect(m_current, nullptr, this, nullptr);
         // connect signals to propagate up
         connect(m_current, &AudioSource::metadataChanged, this, [this]() {
             emit metadataChanged();

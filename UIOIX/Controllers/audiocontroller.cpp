@@ -7,8 +7,6 @@
 #include <QDebug>
 #include <algorithm>
 
-QProcess *mpvProcess = nullptr;
-
 AudioController::AudioController(BluetoothController* btController, QObject* parent)
     : QObject(parent),
     m_volume(0),
@@ -244,8 +242,9 @@ double AudioController::position() const {
 double AudioController::duration() const {
     if (m_sourceManager && m_sourceManager->currentSource()) {
         qint64 dur = 0;
-        if (m_sourceManager->currentSource()->queryDuration(dur))
+        if (m_sourceManager->currentSource()->queryDuration(dur)){
             return dur;
+        }
     }
     return 0;
 }
@@ -347,4 +346,15 @@ void AudioController::playFromLocal(int index)
             setMode(Storage);
         m_sourceManager->storageSource()->playAt(index);
     }
+}
+
+double AudioController::percent() const
+{
+    double dur = duration();
+    double pos = position();
+
+    if (dur > 0.0)
+        return pos / dur;
+
+    return 0.0;
 }

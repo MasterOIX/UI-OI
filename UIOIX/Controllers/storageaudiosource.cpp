@@ -91,8 +91,14 @@ void StorageAudioSource::previous() {
 
 void StorageAudioSource::play()
 {
-    if (m_songs.isEmpty()) return;
+    if (m_songs.isEmpty() || currentIndex >= m_songs.size()) return;
 
+    QFileInfo info(m_songs.at(currentIndex));
+    if (info.isDir()) {
+        currentIndex++;
+        play(); // Recursively play next item
+        return;
+    }
     QString uri = QUrl::fromLocalFile(m_songs.at(currentIndex)).toString(QUrl::FullyEncoded);
 
     // Rebuild pipeline if changed
@@ -168,6 +174,7 @@ void StorageAudioSource::play()
         qWarning() << "[GStreamer] Failed to play";
     } else {
         qDebug() << "[GStreamer] Playback started or resumed";
+        emit metadataChanged();
     }
 }
 
@@ -225,7 +232,6 @@ QStringList StorageAudioSource::list() const {
         QFileInfo info(song);
         if (info.isFile()){
             list << info.baseName(); // just filename without path or extension
-            qDebug() << "[StorageAudioSource] Adding song:" << info.baseName();
         }
         else {
             list << song + " (folder)"; // treat directories as is

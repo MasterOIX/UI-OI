@@ -22,6 +22,7 @@ class AudioController : public QObject
     Q_PROPERTY(QStringList audioList READ audioList NOTIFY audioListChanged)
     Q_PROPERTY(int sourceVolume READ sourceVolume WRITE setSourceVolume NOTIFY sourceVolumeChanged FINAL)
     Q_PROPERTY(QString usbPath READ usbPath NOTIFY usbPathChanged)
+    Q_PROPERTY(double percent READ percent NOTIFY playbackInfoChanged FINAL)
 
 
 public:
@@ -76,6 +77,8 @@ public:
     int sourceVolume() const;
     void setSourceVolume(int newSourceVolume);
 
+    double percent() const;
+
 signals:
     void volumeChanged(int volume);
     void modeChanged();
@@ -90,6 +93,8 @@ signals:
     void sourceVolumeChanged();
     void usbPathChanged();
 
+    void percentChanged();
+
 private:
     int m_volume;
     QStringList m_localSongs;
@@ -99,6 +104,7 @@ private:
     QStringList m_audioList;
     int m_sourceVolume;
     BluetoothAudioSource m_bt;
+    double m_percent;
 };
 
 #endif // AUDIOCONTROLLER_H
