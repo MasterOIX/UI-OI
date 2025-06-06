@@ -53,6 +53,6 @@ void RadioAudioSource::playAt(int index) {
 
 void RadioAudioSource::setVolume(int volumePercent)
 {
-
+    Q_UNUSED(volumePercent);
 }
 

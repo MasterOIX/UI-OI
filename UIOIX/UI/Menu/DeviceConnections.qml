@@ -46,14 +46,19 @@ Rectangle {
 
         CustomSwitch {
             id: bluetoothToggle
+            property bool btState: bluetoothController.bluetoothEnabled
             anchors {
                 right: parent.right
                 rightMargin: 10
                 verticalCenter: bluetoothText.verticalCenter
             }
-            checked: bluetoothController.bluetoothEnabled
-            enabled: !bluetoothController.bluetoothOperationPending
-            onToggled: bluetoothController.setBluetoothEnabled(checked)
+            checked: btState
+
+            onToggled: {
+                btState = checked
+                console.log("Switch toggled to", checked)
+                bluetoothController.setBluetoothEnabled(checked)
+            }
         }
 
         Rectangle {
@@ -249,9 +254,7 @@ Rectangle {
             checked: wifiController.wifiEnabled
 
             onToggled: {
-                console.log("WiFi toggled:", checked);
                 wifiController.wifiEnabled = checked
-                console.log(wifiController.wifiEnabled ? "WiFi enabled" : "WiFi disabled")
             }
         }
 

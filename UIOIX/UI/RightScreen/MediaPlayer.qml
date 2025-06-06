@@ -62,6 +62,7 @@ Item {
             bottom: parent.bottom
             bottomMargin: 10
         }
+        property int loadingWidth: loadingRect.width
         height: 3
         color: "lightgray"
         radius: 2
@@ -75,11 +76,11 @@ Item {
             color: "gray"
             radius: 2
             height: 4
-            width: loadingRect.width * (audioController.duration > 0 ? audioController.position / audioController.duration : 0)
+            width: loadingRect.loadingWidth * audioController.percent
 
             Behavior on width {
                 NumberAnimation {
-                    duration: 150
+                    duration: 50
                     easing.type: Easing.InOutQuad
                 }
             }

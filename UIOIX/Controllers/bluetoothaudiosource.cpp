@@ -4,6 +4,8 @@
 #include <QDBusConnection>
 #include <QDBusReply>
 #include <QTimer>
+#include <QProcess>
+#include <QStringList>
 
 BluetoothAudioSource::BluetoothAudioSource(QObject *parent) : AudioSource(parent) {
     getTrack();
@@ -21,6 +23,13 @@ BluetoothAudioSource::BluetoothAudioSource(QObject *parent) : AudioSource(parent
 
 void BluetoothAudioSource::setBluezDevicePath(const QString &path) {
     qDebug() << "[BluetoothAudioSource] Setting BlueZ device path to:" << path;
+
+    if (m_gstPipeline) {
+        qDebug() << "[BluetoothAudioSource] Stopping existing GStreamer pipeline before setting new device path.";
+        gst_element_set_state(m_gstPipeline, GST_STATE_NULL);
+        gst_object_unref(m_gstPipeline);
+        m_gstPipeline = nullptr;
+    }
 
     if (path.isEmpty()) {
         qWarning() << "[BluetoothAudioSource] Device path is empty! Resetting paths.";
@@ -79,6 +88,9 @@ void BluetoothAudioSource::setBluezDevicePath(const QString &path) {
         getTrack();  // Fetch initial track metadata
         qDebug() << "[BluetoothAudioSource] BlueZ device path set to:" << m_bluezDevicePath;
         qDebug() << "[BluetoothAudioSource] BlueZ player path set to:" << m_playerPath;
+        if (isPlaying()) {
+            play();  // Auto-play if already playing
+        }
     }
 }
 
@@ -89,61 +101,57 @@ void BluetoothAudioSource::onDevicePropertiesChanged(const QString &interface,
 {
     Q_UNUSED(invalidatedProps);
 
-    if (interface == "org.bluez.Device1" && changedProps.contains("ServicesResolved")) {
-        bool resolved = changedProps.value("ServicesResolved").toBool();
-        qDebug() << "[BluetoothAudioSource] ServicesResolved changed:" << resolved;
+    if (interface == "org.bluez.Device1") {
+        if (changedProps.contains("Connected")) {
+            bool connected = changedProps.value("Connected").toBool();
+            qDebug() << "[BluetoothAudioSource] Device connection state changed:" << connected;
 
-        if (resolved) {
-            // Retry setting device path (updates m_playerPath too)
-            setBluezDevicePath(m_bluezDevicePath);
-
-            // ✅ Update metadata
-            QDBusInterface props("org.bluez", m_playerPath, "org.freedesktop.DBus.Properties", QDBusConnection::systemBus());
-            getTrack();
-            QDBusReply<QVariant> posReply = props.call("Get", "org.bluez.MediaPlayer1", "Position");
-            if (posReply.isValid()) {
-                emit playbackInfoChanged();
-            } else {
-                qWarning() << "[BluetoothAudioSource] Failed to get Position:" << posReply.error().message();
+            if (!connected) {
+                qDebug() << "[BluetoothAudioSource] Device disconnected. Cleaning up.";
+                stop();  // cleans up safely
+                m_playerPath.clear();  // avoid using old path
+                return;
             }
+        }
 
-            // ✅ Auto-play if needed
-            play();
+        if (changedProps.contains("ServicesResolved")) {
+            bool resolved = changedProps.value("ServicesResolved").toBool();
+            qDebug() << "[BluetoothAudioSource] ServicesResolved changed:" << resolved;
+
+            if (resolved) {
+                // Retry setting device path (updates m_playerPath too)
+                setBluezDevicePath(m_bluezDevicePath);
+
+                // ✅ Update metadata
+                QDBusInterface props("org.bluez", m_playerPath, "org.freedesktop.DBus.Properties", QDBusConnection::systemBus());
+                getTrack();
+                QDBusReply<QVariant> posReply = props.call("Get", "org.bluez.MediaPlayer1", "Position");
+                if (posReply.isValid()) {
+                    emit playbackInfoChanged();
+                } else {
+                    qWarning() << "[BluetoothAudioSource] Failed to get Position:" << posReply.error().message();
+                }
+
+                // ✅ Auto-play if needed
+                if (isPlaying()) {
+                    play();
+                }
+            }
         }
     }
 }
 
-
 void BluetoothAudioSource::stop() {
-    if (m_bluezDevicePath.isEmpty()) {
-        qWarning() << "[BluetoothAudioSource] Cannot stop – device path is empty.";
-        return;
+    qDebug() << "[BluetoothAudioSource] Stopping Bluetooth audio source...";
+    callControlMethod("Pause");
+
+    // Stop GStreamer pipeline if running
+    if (m_gstPipeline) {
+        gst_element_set_state(m_gstPipeline, GST_STATE_NULL);
+        gst_object_unref(m_gstPipeline);
+        m_gstPipeline = nullptr;
+        qDebug() << "[BluetoothAudioSource] GStreamer pipeline stopped and cleaned up.";
     }
-
-    QDBusInterface deviceInterface(
-        "org.bluez",
-        m_bluezDevicePath,
-        "org.bluez.Device1",
-        QDBusConnection::systemBus()
-        );
-
-    if (!deviceInterface.isValid()) {
-        qWarning() << "[BluetoothAudioSource] Invalid D-Bus interface at:" << m_bluezDevicePath;
-        return;
-    }
-
-    QDBusPendingCall call = deviceInterface.asyncCall("Disconnect");
-    QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(call, this);
-
-    connect(watcher, &QDBusPendingCallWatcher::finished, this, [=](QDBusPendingCallWatcher* w) {
-        QDBusPendingReply<> reply = *w;
-        if (reply.isError()) {
-            qWarning() << "[BluetoothAudioSource] Failed to disconnect device:" << reply.error().message();
-        } else {
-            qDebug() << "[BluetoothAudioSource] Device disconnected successfully.";
-        }
-        w->deleteLater();
-    });
 }
 
 void BluetoothAudioSource::next() {
@@ -160,26 +168,12 @@ void BluetoothAudioSource::play() {
         return;
     }
 
-    // Check if connected
-    QDBusInterface propertiesIface(
-        "org.bluez",
-        m_bluezDevicePath,
-        "org.freedesktop.DBus.Properties",
-        QDBusConnection::systemBus()
-        );
-
+    // Auto-connect if not already
+    QDBusInterface propertiesIface("org.bluez", m_bluezDevicePath, "org.freedesktop.DBus.Properties", QDBusConnection::systemBus());
     if (propertiesIface.isValid()) {
         QDBusReply<QVariant> connectedReply = propertiesIface.call("Get", "org.bluez.Device1", "Connected");
-
         if (connectedReply.isValid() && !connectedReply.value().toBool()) {
-            // Not connected — try to connect
-            QDBusInterface deviceIface(
-                "org.bluez",
-                m_bluezDevicePath,
-                "org.bluez.Device1",
-                QDBusConnection::systemBus()
-                );
-
+            QDBusInterface deviceIface("org.bluez", m_bluezDevicePath, "org.bluez.Device1", QDBusConnection::systemBus());
             if (deviceIface.isValid()) {
                 deviceIface.asyncCall("Connect");
                 qDebug() << "[BluetoothAudioSource] Attempted auto-connect before play.";
@@ -187,10 +181,87 @@ void BluetoothAudioSource::play() {
         }
     }
 
-    // Always try to play
+    // Resume if paused or playing
+    if (m_gstPipeline) {
+        GstState currentState;
+        gst_element_get_state(m_gstPipeline, &currentState, nullptr, 0);
+        if (currentState == GST_STATE_PAUSED || currentState == GST_STATE_PLAYING) {
+            gst_element_set_state(m_gstPipeline, GST_STATE_PLAYING);
+            qDebug() << "[BluetoothAudioSource] Resuming existing GStreamer pipeline.";
+            return;
+        } else {
+            gst_element_set_state(m_gstPipeline, GST_STATE_NULL);
+            gst_object_unref(m_gstPipeline);
+            m_gstPipeline = nullptr;
+        }
+    }
+
+    if (!gst_is_initialized()) {
+        gst_init(nullptr, nullptr);
+    }
+
+    // Get first line from bluealsa-aplay -L
+    QProcess proc;
+    proc.start("bluealsa-aplay", QStringList() << "-L");
+    proc.waitForFinished();
+    QString output = proc.readAllStandardOutput();
+    QStringList lines = output.split('\n', Qt::SkipEmptyParts);
+
+    if (lines.isEmpty()) {
+        qWarning() << "[BluetoothAudioSource] No output from bluealsa-aplay -L.";
+        return;
+    }
+
+    QString deviceLine = lines.first().trimmed();
+    qDebug() << "[BluetoothAudioSource] Using BlueALSA device:" << deviceLine;
+
+    QString pipelineStr = QString(
+      "alsasrc device=%1 provide-clock=false blocksize=2048 latency-time=100000 ! "
+      "audioconvert ! "
+      "audioresample ! "
+      "alsasink device=hw:0").arg(deviceLine);
+
+    qDebug() << "[BluetoothAudioSource] Starting GStreamer pipeline:" << pipelineStr;
+
+    m_gstPipeline = gst_parse_launch(pipelineStr.toUtf8().constData(), nullptr);
+    if (m_gstPipeline) {
+        gst_element_set_state(m_gstPipeline, GST_STATE_PLAYING);
+        qDebug() << "[BluetoothAudioSource] GStreamer pipeline created and started.";
+        GstBus *bus = gst_element_get_bus(m_gstPipeline);
+        gst_bus_add_watch(bus, [](GstBus *bus, GstMessage *msg, gpointer user_data) -> gboolean {
+            Q_UNUSED(bus);
+            auto *self = static_cast<BluetoothAudioSource*>(user_data);
+
+            switch (GST_MESSAGE_TYPE(msg)) {
+            case GST_MESSAGE_EOS:
+                qDebug() << "[BluetoothAudioSource] GStreamer stream ended or errored. Cleaning up.";
+                QMetaObject::invokeMethod(self, "handleStreamRestart", Qt::QueuedConnection);
+                break;
+            case GST_MESSAGE_ERROR:
+                qDebug() << "[BluetoothAudioSource] GStreamer stream ended or errored. Cleaning up.";
+                QMetaObject::invokeMethod(self, "handleStreamRestart", Qt::QueuedConnection);
+                break;
+            default:
+                break;
+            }
+            return TRUE;
+        }, this);
+        gst_object_unref(bus);
+    } else {
+        qWarning() << "[BluetoothAudioSource] Failed to create GStreamer pipeline.";
+        return;
+    }
+
     callControlMethod("Play");
 }
 
+void BluetoothAudioSource::handleStreamRestart() {
+    stop();
+    if (isPlaying()) {
+        qDebug() << "[BluetoothAudioSource] Restarting Bluetooth playback...";
+        play();
+    }
+}
 
 void BluetoothAudioSource::pause() {
     callControlMethod("Pause");
@@ -260,15 +331,33 @@ void BluetoothAudioSource::setVolume(int volumePercent) {
 
 void BluetoothAudioSource::onPropertiesChanged(const QString &interface,
                                                const QVariantMap &changedProps,
-                                               const QStringList &invalidatedProps) {
+                                               const QStringList &invalidatedProps)
+{
     Q_UNUSED(invalidatedProps);
+
     if (interface == "org.bluez.MediaPlayer1") {
         if (changedProps.contains("Track")) {
             m_currentTrack = qdbus_cast<QVariantMap>(changedProps.value("Track"));
             emit metadataChanged();
         }
     }
+
+    // ✅ Detect change in MediaControl1's Player property
+    if (interface == "org.bluez.MediaControl1" && changedProps.contains("Player")) {
+        QDBusObjectPath newPlayerPath = changedProps.value("Player").value<QDBusObjectPath>();
+        QString newPath = newPlayerPath.path();
+
+        if (newPath != m_playerPath) {
+            qDebug() << "[BluetoothAudioSource] Player path changed to:" << newPath;
+            m_playerPath = newPath;
+
+            // Refresh metadata if needed
+            getTrack();
+            emit playbackInfoChanged();
+        }
+    }
 }
+
 
 void BluetoothAudioSource::getTrack() {
     if (m_playerPath.isEmpty()) {

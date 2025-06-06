@@ -20,6 +20,10 @@ AudioController::AudioController(BluetoothController* btController, QObject* par
     });
     m_sourceManager = new AudioSourceManager(btController, this);
 
+    // Connect metadata and playback info signals from AudioSourceManager
+    connect(m_sourceManager, &AudioSourceManager::metadataChanged, this, &AudioController::metadataChanged);
+    connect(m_sourceManager, &AudioSourceManager::playbackInfoChanged, this, &AudioController::playbackInfoChanged);
+
     int sysVol = getSystemVolume();
     setVolume(sysVol >= 0 ? sysVol : 50);
 
@@ -32,10 +36,6 @@ AudioController::AudioController(BluetoothController* btController, QObject* par
     else if (savedMode == "Web") restoredMode = Web;
 
     setMode(restoredMode);
-
-    // Connect metadata and playback info signals from AudioSourceManager
-    connect(m_sourceManager, &AudioSourceManager::metadataChanged, this, &AudioController::metadataChanged);
-    connect(m_sourceManager, &AudioSourceManager::playbackInfoChanged, this, &AudioController::playbackInfoChanged);
 }
 
 AudioController::~AudioController() {
@@ -49,7 +49,7 @@ void AudioController::setSystemVolume(int volumePercent) {
     snd_mixer_selem_id_t *sid = nullptr;
 
     const char *card = "default";
-    const char *selem_name = "Master";
+    const char *controlNames[] = {"Master", "Headphone", "PCM"}; // Try in order
 
     if (snd_mixer_open(&handle, 0) < 0) return;
     if (snd_mixer_attach(handle, card) < 0 ||
@@ -60,11 +60,20 @@ void AudioController::setSystemVolume(int volumePercent) {
     }
 
     snd_mixer_selem_id_malloc(&sid);
-    snd_mixer_selem_id_set_index(sid, 0);
-    snd_mixer_selem_id_set_name(sid, selem_name);
+    snd_mixer_elem_t *elem = nullptr;
 
-    snd_mixer_elem_t *elem = snd_mixer_find_selem(handle, sid);
+    for (const char *selem_name : controlNames) {
+        snd_mixer_selem_id_set_index(sid, 0);
+        snd_mixer_selem_id_set_name(sid, selem_name);
+        elem = snd_mixer_find_selem(handle, sid);
+        if (elem) {
+            qDebug() << "[AudioController] Using mixer control:" << selem_name;
+            break;
+        }
+    }
+
     if (!elem) {
+        qWarning() << "[AudioController] No usable mixer control found.";
         snd_mixer_selem_id_free(sid);
         snd_mixer_close(handle);
         return;
@@ -73,11 +82,12 @@ void AudioController::setSystemVolume(int volumePercent) {
     long min, max;
     snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
     long volume = min + ((max - min) * volumePercent) / 100;
+
     snd_mixer_selem_set_playback_volume_all(elem, volume);
     snd_mixer_selem_set_playback_switch_all(elem, 1);
 
-    snd_mixer_close(handle);
     snd_mixer_selem_id_free(sid);
+    snd_mixer_close(handle);
 }
 
 int AudioController::getSystemVolume() const {

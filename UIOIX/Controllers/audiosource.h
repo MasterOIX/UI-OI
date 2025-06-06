@@ -22,10 +22,15 @@ public:
     virtual QStringList list() const = 0;
     virtual void playAt(int index) = 0;
     virtual void setVolume(int volumePercent) = 0;
+    bool isPlaying() const { return playing; }
+    void setPlaying(bool value) { playing = value; emit playbackInfoChanged(); }
 
 signals:
     void metadataChanged();
     void playbackInfoChanged();
+
+private:
+    bool playing = false;
 };
 
 #endif // AUDIOSOURCE_H

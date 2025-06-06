@@ -64,5 +64,7 @@
         <file>UI/Menu/VehicleStatus.qml</file>
         <file>UI/Menu/CustomSwitch.qml</file>
         <file>UI/Menu/PasswordDialog.qml</file>
+        <file>UI/assests/u_warning.png</file>
+        <file>UI/assests/warning.png</file>
     </qresource>
 </RCC>

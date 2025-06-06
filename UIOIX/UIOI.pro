@@ -10,6 +10,7 @@ SOURCES += \
         Controllers/bluetoothaudiosource.cpp \
         Controllers/bluetoothcontroller.cpp \
         Controllers/hvachandler.cpp \
+        Controllers/infocontroller.cpp \
         Controllers/onlineradioaudiosource.cpp \
         Controllers/radioaudiosource.cpp \
         Controllers/settingsmanager.cpp \
@@ -55,6 +56,7 @@ HEADERS += \
     Controllers/bluetoothcontroller.h \
     Controllers/bluezagent.h \
     Controllers/hvachandler.h \
+    Controllers/infocontroller.h \
     Controllers/onlineradioaudiosource.h \
     Controllers/radioaudiosource.h \
     Controllers/settingsmanager.h \

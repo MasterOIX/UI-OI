@@ -20,6 +20,7 @@
 #include <Controllers/valhallacontroller.h>
 #include <Controllers/wificontroller.h>
 #include <Controllers/bluetoothcontroller.h>
+#include <Controllers/infocontroller.h>
 
 QDBusArgument &operator<<(QDBusArgument &argument, const QMap<QString, QVariantMap> &map)
 {
@@ -105,6 +106,7 @@ int main(int argc, char *argv[])
     AudioController m_audio_controller(&m_bluetooth_controller);
     ValhallaController m_valhalla_controller;
     WiFiController m_wifi_controller;
+    InfoController infoController;
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -125,6 +127,7 @@ int main(int argc, char *argv[])
     context->setContextProperty("valhalla_controller", &m_valhalla_controller);
     context->setContextProperty("wifiController", &m_wifi_controller);
     context->setContextProperty("bluetoothController", &m_bluetooth_controller);
+    engine.rootContext()->setContextProperty("infoController", &infoController);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(

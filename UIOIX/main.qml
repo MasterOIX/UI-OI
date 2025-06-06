@@ -13,6 +13,8 @@ Window {
     // flags: Qt.FramelessWindowHint
     title: qsTr("Infotainment")
 
+
+
     RightScreen {
         id: rightScreen
     }
@@ -21,16 +23,16 @@ Window {
         id: leftScreen
     }
 
+    Menu {
+        id: menu
+    }
+
     TopBar {
         id: topBar
     }
 
     BottomBar {
         id: bottomBar
-    }
-
-    Menu {
-        id: menu
     }
 
 }

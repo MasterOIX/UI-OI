@@ -5,6 +5,8 @@
 #include <QVariantMap>
 #include <QObject>
 #include <QTimer>
+#include <gst/gst.h>
+#include <gst/gstpipeline.h>
 
 class BluetoothAudioSource : public AudioSource {
     Q_OBJECT
@@ -33,6 +35,7 @@ public:
 private slots:
     void onPropertiesChanged(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
     void onDevicePropertiesChanged(const QString &interface, const QVariantMap &changedProps, const QStringList &invalidatedProps);
+    void handleStreamRestart();
 
 private:
 
@@ -40,6 +43,7 @@ private:
     QString m_playerPath;        // e.g. "/org/bluez/hci0/dev_XX_XX_XX_XX_XX_XX/player0"
     QString m_service = "org.bluez";
     QVariantMap m_currentTrack;
+    GstElement *m_gstPipeline = nullptr;
 };
 
 #endif // BLUETOOTHAUDIOSOURCE_H

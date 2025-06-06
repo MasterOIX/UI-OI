@@ -6,8 +6,6 @@ import QtQuick.Dialogs 1.3
 
 Rectangle {
     id: root
-    width: 300
-    height: 400
     color: "transparent"
     property string currentFolder: ""
 

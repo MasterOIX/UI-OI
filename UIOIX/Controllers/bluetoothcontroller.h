@@ -12,6 +12,7 @@
 #include <functional>
 #include "bluezagent.h"
 
+
 class BluetoothDevice : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString name READ name CONSTANT)
@@ -46,7 +47,7 @@ class BluetoothController : public QObject
 {
     Q_OBJECT
     // These Q_PROPERTY are for QML binding, use the *Async() methods for UI updates if needed!
-    Q_PROPERTY(bool bluetoothEnabled READ bluetoothEnabled NOTIFY bluetoothEnabledChanged)
+    Q_PROPERTY(bool bluetoothEnabled READ bluetoothEnabled WRITE setBluetoothEnabled NOTIFY bluetoothEnabledChanged)
     Q_PROPERTY(bool pairable READ pairable NOTIFY pairableChanged)
     Q_PROPERTY(QString pairingCode READ pairingCode NOTIFY pairingCodeChanged)
     Q_PROPERTY(QList<QObject*> pairedDevices READ pairedDevices NOTIFY pairedDevicesChanged)
@@ -67,7 +68,7 @@ public:
 
     // Async methods for D-Bus interactions
     Q_INVOKABLE void bluetoothEnabledAsync(std::function<void(bool)> callback) ;
-    Q_INVOKABLE void setBluetoothEnabled(bool enabled); // Remains void, emits signal on completion
+    Q_INVOKABLE void setBluetoothEnabled(bool enabled);
 
     Q_INVOKABLE void connectToPairedDevice(const QString &mac);
     Q_INVOKABLE void disconnectFromDevice();

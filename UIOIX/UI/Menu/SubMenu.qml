@@ -25,7 +25,7 @@ Rectangle {
         font.bold: true
     }
 
-    Loader {
+    Item {
         id: pageLoader
         anchors {
             top: title.bottom
@@ -38,15 +38,34 @@ Rectangle {
             bottomMargin: 40
         }
 
-        source: {
-            switch (menuList.selectedItem) {
-            case "Connections": return "DeviceConnections.qml";
-            case "Media": return "Media.qml";
-            case "Settings": return "Settings.qml";
-            case "Trip Computer": return "TripComputer.qml";
-            case "Vehicle Status": return "VehicleStatus.qml";
-            default: return "";
-            }
+        DeviceConnections {
+            id: deviceConnections
+            visible: menuList.selectedItem === "Connections"
+            anchors.fill: parent
+        }
+
+        Media {
+            id: media
+            visible: menuList.selectedItem === "Media"
+            anchors.fill: parent
+        }
+
+        Settings {
+            id: settings
+            visible: menuList.selectedItem === "Settings"
+            anchors.fill: parent
+        }
+
+        TripComputer {
+            id: tripComputer
+            visible: menuList.selectedItem === "Trip Computer"
+            anchors.fill: parent
+        }
+
+        VehicleStatus {
+            id: vehicleStatus
+            visible: menuList.selectedItem === "Vehicle Status"
+            anchors.fill: parent
         }
     }
 }

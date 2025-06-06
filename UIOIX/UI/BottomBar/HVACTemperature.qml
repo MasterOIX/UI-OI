@@ -60,7 +60,7 @@ Rectangle {
         height: parent.height
         Text {
             id: temperatureText
-            text: zoneModel.temperature
+            text: systemHandler.convertCelsiusToFahrenheit(zoneModel.temperature)
             color: "white"
             font.pixelSize: 20
             anchors.centerIn: parent
@@ -122,6 +122,14 @@ Rectangle {
                 }
             }
             cursorShape: Qt.PointingHandCursor
+        }
+    }
+
+    Connections {
+        target: systemHandler
+        function onTempUnitChanged(unit) {
+            const converted = systemHandler.convertCelsiusToFahrenheit(zoneModel.temperature);
+            temperatureText.text = converted;
         }
     }
 }

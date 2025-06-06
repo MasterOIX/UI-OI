@@ -17,8 +17,10 @@ void AudioSourceManager::nextSource() {
 }
 
 void AudioSourceManager::setMode(PlaybackMode mode) {
-    if (m_current)
+    if (m_current){
+        m_current->setPlaying(false);
         m_current->stop();
+    }
 
     m_mode = mode;
     updateSourcePointer();
@@ -32,7 +34,7 @@ void AudioSourceManager::setMode(PlaybackMode mode) {
         connect(m_current, &AudioSource::playbackInfoChanged, this, [this]() {
             emit playbackInfoChanged();
         });
-
+        m_current->setPlaying(true);
         m_current->play();
     }
 }

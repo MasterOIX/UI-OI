@@ -15,7 +15,12 @@
 BluetoothController::BluetoothController(QObject *parent)
     : QObject(parent)
 {
+    bluetoothEnabledAsync([this](bool powered) {
+        m_bluetoothEnabled = powered;
+        emit bluetoothEnabledChanged();
+    });
 }
+
 
 void BluetoothController::bluetoothEnabledAsync(std::function<void(bool)> callback) {
     QString path = getAdapterPath();
@@ -48,6 +53,7 @@ void BluetoothController::bluetoothEnabledAsync(std::function<void(bool)> callba
 
 void BluetoothController::setBluetoothEnabled(bool enabled) {
     QString path = getAdapterPath();
+    qDebug() << "[BluetoothController] Enabling Bluetooth adapter... path:" << path;
     if (path.isEmpty()) {
         qWarning() << "[Bluetooth] No adapter found for enabling/disabling.";
         emit bluetoothOperationPendingChanged(false);
@@ -80,7 +86,11 @@ void BluetoothController::setBluetoothEnabled(bool enabled) {
             } else {
                 m_bluetoothEnabled = true;
                 emit bluetoothEnabledChanged();
-                scanPairedDevices();  // Re-fetch after power-on
+                QTimer::singleShot(100, this, [this]() {
+                    qDebug() << "[BluetoothController] Delayed scanPairedDevices after Bluetooth enable.";
+                    scanPairedDevices();
+                });
+                qDebug() << "[Bluetooth] Bluetooth adapter enabled successfully.";
                 emit bluetoothOperationPendingChanged(false);
             }
             w->deleteLater();
@@ -88,11 +98,21 @@ void BluetoothController::setBluetoothEnabled(bool enabled) {
 
     } else {
         qDebug() << "[Bluetooth] Disabling = disconnecting current device (no power off)";
-        disconnectFromDevice();  // DO NOT turn off adapter
+        disconnectFromDevice();
+
+        if (m_connectedDevice) {
+            m_connectedDevice->setConnected(false);
+            delete m_connectedDevice;
+            m_connectedDevice = nullptr;
+            emit connectedDeviceChanged();
+        }
+
+        clearDevices(); // <-- Add this to avoid stale pointers
         m_bluetoothEnabled = false;
         emit bluetoothEnabledChanged();
         emit bluetoothOperationPendingChanged(false);
     }
+
 }
 
 
@@ -109,38 +129,57 @@ void BluetoothController::removePairedDevice(const QString &mac) {
 }
 
 void BluetoothController::scanPairedDevices() {
+    qDebug() << "[BluetoothController] scanPairedDevices() triggered.";
+
     clearDevices();
+    qDebug() << "[BluetoothController] Clearing existing paired devices.";
     QDBusInterface objManager("org.bluez", "/", "org.freedesktop.DBus.ObjectManager", QDBusConnection::systemBus());
+
+    if (!objManager.isValid()) {
+        qWarning() << "[BluetoothController] Failed to create DBus ObjectManager interface!";
+        return;
+    }
+
     QDBusPendingCall asyncCall = objManager.asyncCall("GetManagedObjects");
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(asyncCall, this);
+
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [=](QDBusPendingCallWatcher *w) {
         Q_UNUSED(w);
+        qDebug() << "[BluetoothController] GetManagedObjects finished.";
         QDBusPendingReply<QMap<QDBusObjectPath, QMap<QString, QVariantMap>>> reply = *watcher;
-        if (reply.isValid()) {
-            auto managed = reply.value();
-            for (auto it = managed.constBegin(); it != managed.constEnd(); ++it) {
-                const QMap<QString, QVariantMap> &interfaces = it.value();
 
-                if (interfaces.contains("org.bluez.Device1")) {
-                    const QVariantMap &ifaceProps = interfaces["org.bluez.Device1"];
-                    QString name = ifaceProps.value("Name").toString();
-                    QString mac = ifaceProps.value("Address").toString();
-                    bool connected = ifaceProps.value("Connected").toBool();
-                    auto *device = new BluetoothDevice(name, mac, connected);
-                    m_pairedDevices.append(device);
-                    if (connected) {
-                        // Set m_connectedDevice!
-                        m_connectedDevice = device;
-                        emit connectedDeviceChanged();
-                        emit bluetoothMediaPlayerPathChanged(bluezPlayerPathForDevice(device->mac()));
-                    }
+        if (!reply.isValid()) {
+            qWarning() << "[BluetoothController] GetManagedObjects failed:" << reply.error().message();
+            watcher->deleteLater();
+            return;
+        }
+
+        auto managed = reply.value();
+        for (auto it = managed.constBegin(); it != managed.constEnd(); ++it) {
+            const QMap<QString, QVariantMap> &interfaces = it.value();
+
+            if (interfaces.contains("org.bluez.Device1")) {
+                const QVariantMap &ifaceProps = interfaces["org.bluez.Device1"];
+                QString name = ifaceProps.value("Name").toString();
+                QString mac = ifaceProps.value("Address").toString();
+                bool connected = ifaceProps.value("Connected").toBool();
+                qDebug() << "[BluetoothController] Scanning paired device:" << name << mac << "Connected:" << connected;
+                auto *device = new BluetoothDevice(name, mac, connected, this);
+
+                m_pairedDevices.append(device);
+                if (connected) {
+                    m_connectedDevice = device;
+                    emit connectedDeviceChanged();
+                    emit bluetoothMediaPlayerPathChanged(bluezPlayerPathForDevice(device->mac()));
                 }
             }
-            emit pairedDevicesChanged();
         }
+        //autoConnectIfAvailable();
+        emit pairedDevicesChanged();
         watcher->deleteLater();
     });
 }
+
 
 void BluetoothController::makeDiscoverable(int seconds) {
     QString path = getAdapterPath();
@@ -193,8 +232,10 @@ void BluetoothController::connectToDevicePath(const QString &devicePath) {
                        << ". Error:" << reply.error().message();
         } else {
             qDebug() << "[Bluetooth] Successfully connected to device at path:" << devicePath;
-            // Find device in m_pairedDevices and set as m_connectedDevice
-            for (QObject *obj : m_pairedDevices) {
+            trustDevice(devicePath);
+
+            // Find the device object and update internal state
+            for (QObject *obj : std::as_const(m_pairedDevices)) {
                 auto *dev = qobject_cast<BluetoothDevice *>(obj);
                 if (dev && macToDevicePath(dev->mac()) == devicePath) {
                     m_connectedDevice = dev;
@@ -208,8 +249,6 @@ void BluetoothController::connectToDevicePath(const QString &devicePath) {
         watcher->deleteLater();
     });
 }
-
-
 
 void BluetoothController::disconnectFromDevice() {
     if (!m_connectedDevice) return;
@@ -237,19 +276,29 @@ void BluetoothController::disconnectFromDevice() {
     });
 }
 
-
-
-// The following methods remain unchanged (unless you want to async-ify adapter path lookup!)
-// ---- Utility and state handling ----
 void BluetoothController::clearDevices() {
-    qDeleteAll(m_pairedDevices);
-    m_pairedDevices.clear();
-    emit pairedDevicesChanged();
-    delete m_connectedDevice;
+    for (QObject* obj : std::as_const(m_pairedDevices)) {
+        if (obj->parent() == this) {
+            if (obj == m_connectedDevice) {
+                qDebug() << "[BluetoothController] Clearing connected device:";
+            }
+            else obj->deleteLater();
+        }
+    }
+
+    m_pairedDevices.clear();  // 🔥 MUST be done after loop
+    qDebug() << "Cleared paired devices";
+
+    if (m_connectedDevice && m_connectedDevice->parent() == this) {
+        m_connectedDevice->deleteLater();
+    }
     m_connectedDevice = nullptr;
+
+    emit pairedDevicesChanged();
     emit connectedDeviceChanged();
-    emit bluetoothMediaPlayerPathChanged(QString());
+    qDebug() << "[BluetoothController] Clearing paired devices.";
 }
+
 
 void BluetoothController::updateConnectedDevice() {
     for (QObject* obj : std::as_const(m_pairedDevices)) {
@@ -265,8 +314,9 @@ void BluetoothController::updateConnectedDevice() {
 void BluetoothController::autoConnectIfAvailable() {
     for (QObject* obj : m_pairedDevices) {
         auto *dev = qobject_cast<BluetoothDevice*>(obj);
-        if (dev && !dev->connected()) {
+        if (dev && !dev->connected() && !m_connectedDevice) {
             connectToPairedDevice(dev->mac());
+            qDebug() << "[BluetoothController] Auto-connecting to device:" << dev->name() << dev->mac();
             break;
         }
     }
