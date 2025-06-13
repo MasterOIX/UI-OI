@@ -34,7 +34,6 @@ public:
 
 private slots:
     void onPropertiesChanged(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
-    void onDevicePropertiesChanged(const QString &interface, const QVariantMap &changedProps, const QStringList &invalidatedProps);
     void handleStreamRestart();
 
 private:
@@ -44,6 +43,7 @@ private:
     QString m_service = "org.bluez";
     QVariantMap m_currentTrack;
     GstElement *m_gstPipeline = nullptr;
+    GstElement *m_volumeElement = nullptr;
 };
 
 #endif // BLUETOOTHAUDIOSOURCE_H

@@ -139,7 +139,10 @@ void AudioController::setVolume(int newVolume) {
     newVolume = std::clamp(newVolume, 0, 100);
     if (m_volume == newVolume) return;
     m_volume = newVolume;
-    setSystemVolume(newVolume);
+    setSystemVolume(100);
+    if (m_sourceManager && m_sourceManager->currentSource()){
+        m_sourceManager->currentSource()->setVolume(newVolume);
+    }
     emit volumeChanged(m_volume);
 }
 
@@ -274,9 +277,9 @@ void AudioController::printPlaybackStatus() {
         double durSec = dur;
         double percent = (posSec * 100.0) / durSec;
 
-        qDebug().nospace()
+        /*qDebug().nospace()
             << "⏱ " << posSec << "s / " << durSec << "s  |  "
-            << "📊 " << QString::number(percent, 'f', 1) << "% played";
+            << "📊 " << QString::number(percent, 'f', 1) << "% played";*/
     }
 }
 

@@ -115,13 +115,14 @@ void OnlineRadioAudioSource::playAt(int index) {
     }
 }
 
-void OnlineRadioAudioSource::setVolume(int volumePercent)
-{
-    if (!m_player) return;
+void OnlineRadioAudioSource::setVolume(int volumePercent) {
+    if (!m_player) {
+        qWarning() << "[OnlineRadioAudioSource] GStreamer player is not initialized!";
+        return;
+    }
 
-    // Clamp and normalize to 0.0–1.0
-    double volume = qBound(0, volumePercent, 100) / 100.0;
-
+    double volume = qBound(0.0, volumePercent / 100.0, 1.0);
     g_object_set(G_OBJECT(m_player), "volume", volume, nullptr);
-    qDebug() << "[OnlineRadio] Volume set to:" << volume << "(" << volumePercent << "%)";
+    qDebug() << "[OnlineRadioAudioSource] Set playbin volume to:" << volume;
 }
+

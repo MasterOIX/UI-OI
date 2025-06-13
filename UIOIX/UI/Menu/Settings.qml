@@ -144,7 +144,9 @@ Rectangle {
         border.width: 1
         Text {
             id: speedWarningValue
-            text: systemHandler.speedWarning + systemHandler.speedUnit
+            text: (systemHandler.speedUnit === "mph"
+                         ? systemHandler.convertKMHToMPH(systemHandler.speedWarning)
+                         : systemHandler.speedWarning) + systemHandler.speedUnit
             anchors.centerIn: parent
             color: "black"
             font.pixelSize: 12
@@ -181,9 +183,11 @@ Rectangle {
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
-        property int speedWarningValue: 90
-        property int minSpeed: 0
-        property int maxSpeed: 260
+        // Convertire dinamică în funcție de unitate
+        property int maxSpeed: systemHandler.speedUnit === "mph" ? systemHandler.convertKMHToMPH(260) : 260
+        property int initialSpeed: systemHandler.speedUnit === "mph"
+                                    ? systemHandler.convertKMHToMPH(systemHandler.speedWarning)
+                                    : systemHandler.speedWarning
         property int step: 5
 
         background: Rectangle {
@@ -198,11 +202,10 @@ Rectangle {
 
             Dial {
                 id: speedDial
-                maximumValue: 260
-                stepSize: 5
-                value: speedDialPopup.speedWarningValue
-                tickmarksVisible : true
-
+                maximumValue: speedDialPopup.maxSpeed
+                stepSize: speedDialPopup.step
+                value: speedDialPopup.initialSpeed
+                tickmarksVisible: true
                 width: 200
                 height: 200
 
@@ -213,7 +216,7 @@ Rectangle {
 
             Text {
                 id: speedValueLabel
-                text: "Speed Warning: " + speedDialPopup.speedWarningValue + systemHandler.speedUnit
+                text: "Speed Warning: " + speedDialPopup.initialSpeed + systemHandler.speedUnit
                 color: "white"
                 font.pixelSize: 18
                 horizontalAlignment: Text.AlignHCenter
@@ -232,8 +235,16 @@ Rectangle {
                 Button {
                     text: "Apply"
                     onClicked: {
-                        systemHandler.speedWarning = speedDial.value
-                        speedWarningSelector.children[0].text = systemHandler.speedWarning + systemHandler.speedUnit
+                        // Convertim înapoi în km/h dacă suntem pe mph
+                        let valueInKmh = systemHandler.speedUnit === "mph"
+                            ? systemHandler.convertKMHToMPH(speedDial.value)
+                            : speedDial.value
+
+                        systemHandler.speedWarning = valueInKmh
+
+                        // Actualizare text selector din pagină principală
+                        speedWarningSelector.children[0].text = speedDial.value + systemHandler.speedUnit
+
                         speedDialPopup.close()
                     }
                 }

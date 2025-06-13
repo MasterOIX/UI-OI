@@ -40,7 +40,7 @@ Rectangle {
 
         DeviceConnections {
             id: deviceConnections
-            visible: menuList.selectedItem === "Connections"
+            visible: menuList.selectedItem === "Connectivity"
             anchors.fill: parent
         }
 

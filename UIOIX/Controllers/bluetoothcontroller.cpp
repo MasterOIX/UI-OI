@@ -231,18 +231,49 @@ void BluetoothController::connectToDevicePath(const QString &devicePath) {
             qWarning() << "[Bluetooth] Failed to connect to device at path:" << devicePath
                        << ". Error:" << reply.error().message();
         } else {
-            qDebug() << "[Bluetooth] Successfully connected to device at path:" << devicePath;
-            trustDevice(devicePath);
+            QDBusInterface iface("org.bluez", devicePath,
+                                 "org.freedesktop.DBus.Properties",
+                                 QDBusConnection::systemBus());
 
-            // Find the device object and update internal state
-            for (QObject *obj : std::as_const(m_pairedDevices)) {
-                auto *dev = qobject_cast<BluetoothDevice *>(obj);
-                if (dev && macToDevicePath(dev->mac()) == devicePath) {
-                    m_connectedDevice = dev;
-                    dev->setConnected(true);
-                    emit connectedDeviceChanged();
-                    emit bluetoothMediaPlayerPathChanged(bluezPlayerPathForDevice(dev->mac()));
-                    break;
+            QDBusReply<QVariant> reply = iface.call("Get", "org.bluez.MediaControl1", "Connected");
+
+            if (!reply.isValid()) {
+                qWarning() << "[Bluetooth] Failed to get MediaControl1 Connected property:" << reply.error().message();
+                return;
+            }
+            if (!reply.value().toBool()) {
+                QTimer::singleShot(3500, this, [=]() {
+                    QDBusInterface retryDev("org.bluez", devicePath, "org.bluez.Device1", QDBusConnection::systemBus());
+                    retryDev.call("Connect");
+
+                    trustDevice(devicePath);
+                    for (QObject *obj : std::as_const(m_pairedDevices)) {
+                        auto *dev = qobject_cast<BluetoothDevice *>(obj);
+                        if (dev && macToDevicePath(dev->mac()) == devicePath) {
+                            m_connectedDevice = dev;
+                            dev->setConnected(true);
+                            emit connectedDeviceChanged();
+                            emit bluetoothMediaPlayerPathChanged(bluezPlayerPathForDevice(dev->mac()));
+                            break;
+                        }
+                    }
+                });
+            }
+
+            else {
+                qDebug() << "[Bluetooth] Successfully connected to device at path:" << devicePath;
+                trustDevice(devicePath);
+
+                // Find the device object and update internal state
+                for (QObject *obj : std::as_const(m_pairedDevices)) {
+                    auto *dev = qobject_cast<BluetoothDevice *>(obj);
+                    if (dev && macToDevicePath(dev->mac()) == devicePath) {
+                        m_connectedDevice = dev;
+                        dev->setConnected(true);
+                        emit connectedDeviceChanged();
+                        emit bluetoothMediaPlayerPathChanged(bluezPlayerPathForDevice(dev->mac()));
+                        break;
+                    }
                 }
             }
         }
@@ -286,7 +317,7 @@ void BluetoothController::clearDevices() {
         }
     }
 
-    m_pairedDevices.clear();  // 🔥 MUST be done after loop
+    m_pairedDevices.clear();
     qDebug() << "Cleared paired devices";
 
     if (m_connectedDevice && m_connectedDevice->parent() == this) {

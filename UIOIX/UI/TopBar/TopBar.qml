@@ -139,7 +139,7 @@ Rectangle {
         color: "black"
         font.pixelSize: 14
         font.bold:true
-        text: systemHandler.outdoorTemp + "°C"
+        text: systemHandler.outdoorTemp + systemHandler.tempUnit
     }
 
     Image {

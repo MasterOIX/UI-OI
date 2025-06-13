@@ -14,7 +14,7 @@ Rectangle {
 
     ListModel {
         id: menuModel
-        ListElement { text: "Connections" }
+        ListElement { text: "Connectivity" }
         ListElement { text: "Media" }
         ListElement { text: "Settings" }
         ListElement { text: "Trip Computer" }
@@ -22,7 +22,7 @@ Rectangle {
     }
 
     property int selectedIndex: 0
-    property string selectedItem: menuModel[selectedIndex] ? menuModel[selectedIndex].text : "Connections"
+    property string selectedItem: menuModel[selectedIndex] ? menuModel[selectedIndex].text : "Connectivity"
 
     Column {
         id: menuColumn

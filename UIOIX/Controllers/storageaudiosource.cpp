@@ -56,16 +56,17 @@ QStringList StorageAudioSource::songList() const {
     return m_songs;
 }
 
-void StorageAudioSource::setVolume(int volumePercent)
-{
-    if (!m_player) return;
+void StorageAudioSource::setVolume(int volumePercent) {
+    if (!m_player) {
+        qWarning() << "[OnlineRadioAudioSource] GStreamer player is not initialized!";
+        return;
+    }
 
-    // Convert 0–100 to 0.0–1.0
-    double volume = qBound(0, volumePercent, 100) / 100.0;
-
+    double volume = qBound(0.0, volumePercent / 100.0, 1.0);
     g_object_set(G_OBJECT(m_player), "volume", volume, nullptr);
-    qDebug() << "[GStreamer] Volume set to:" << volume << "(" << volumePercent << "%)";
+    qDebug() << "[OnlineRadioAudioSource] Set playbin volume to:" << volume;
 }
+
 
 void StorageAudioSource::next() {
     if (m_songs.isEmpty()) return;
@@ -111,7 +112,6 @@ void StorageAudioSource::play()
             m_artist.clear();
             m_album.clear();
         }
-
         m_player = gst_parse_launch(QString("playbin uri=\"%1\"").arg(uri).toUtf8().constData(), nullptr);
         if (!m_player) {
             qWarning() << "[GStreamer] Failed to create playbin";

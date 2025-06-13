@@ -20,6 +20,7 @@ void AudioSourceManager::setMode(PlaybackMode mode) {
     if (m_current){
         m_current->setPlaying(false);
         m_current->stop();
+        qDebug() << "[AudioSourceManager] Stopping current source:" << m_current->isPlaying();
     }
 
     m_mode = mode;

@@ -5,7 +5,7 @@ System::System(QObject *parent)
     m_carLocked(false),
     m_outdoorTemp(21),
     m_userName("Dragos"),
-    m_batteryPercent(50),
+    m_batteryPercent(11),
     m_settings(this)
 {
     m_tempUnit = m_settings.loadTempUnit();
