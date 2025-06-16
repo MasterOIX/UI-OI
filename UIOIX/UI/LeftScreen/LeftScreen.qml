@@ -1,5 +1,4 @@
 import QtQuick 2.12
-import QtQuick3D 1.15
 
 Rectangle {
     id: leftScreen
