@@ -508,7 +508,7 @@ Rectangle {
 
     Connections {
         target: bluetoothController
-        function onPairingPromptReceived() {
+        function onPairingPromptReceived(prompt) {
             console.log("Pairing prompt received:", prompt)
             pairingPromptDialog.text = prompt
             pairingPromptDialog.open()
