@@ -35,7 +35,7 @@ void WiFiController::scanNetworks()
 {
     // Step 1: Get currently connected SSID
     QProcess checkProcess;
-    checkProcess.start("sudo", {"nmcli", "-t", "-f", "active,ssid", "dev", "wifi"});
+    checkProcess.start("nmcli", {"-t", "-f", "active,ssid", "dev", "wifi"});
     checkProcess.waitForFinished();
 
     QString activeOutput = checkProcess.readAllStandardOutput();
@@ -85,7 +85,7 @@ void WiFiController::scanNetworks()
                 process->deleteLater();
             });
 
-    process->start("sudo", {"nmcli", "-t", "-f", "SSID,SIGNAL,SECURITY", "device", "wifi", "list"});
+    process->start("nmcli", {"-t", "-f", "SSID,SIGNAL,SECURITY", "device", "wifi", "list"});
 }
 
 void WiFiController::connectToNetwork(QObject* networkObj)
@@ -101,9 +101,9 @@ void WiFiController::connectToNetwork(QObject* networkObj)
     QStringList connectArgs;
 
     if (password.isEmpty()) {
-        connectArgs << "nmcli" << "device" << "wifi" << "connect" << ssid;
+        connectArgs << "device" << "wifi" << "connect" << ssid;
     } else {
-        connectArgs << "nmcli" << "device" << "wifi" << "connect" << ssid << "password" << password;
+        connectArgs << "device" << "wifi" << "connect" << ssid << "password" << password;
     }
 
     QProcess* connectProcess = new QProcess(this);
@@ -121,7 +121,7 @@ void WiFiController::connectToNetwork(QObject* networkObj)
 
                     // ✅ Step 2: Set autoconnect ON
                     QProcess* autoConnectProcess = new QProcess(this);
-                    autoConnectProcess->start("sudo", {"nmcli", "connection", "modify", ssid, "connection.autoconnect", "yes"});
+                    autoConnectProcess->start("nmcli", {"connection", "modify", ssid, "connection.autoconnect", "yes"});
                     autoConnectProcess->deleteLater();
 
                     setConnectionFailed(false);
@@ -135,7 +135,7 @@ void WiFiController::connectToNetwork(QObject* networkObj)
                 connectProcess->deleteLater();
             });
 
-    connectProcess->start("sudo", connectArgs);
+    connectProcess->start("ncmli", connectArgs);
 }
 
 bool WiFiController::isKnownAndTrusted(const QString &ssid) const
