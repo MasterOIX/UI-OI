@@ -11,6 +11,7 @@
 #include <QtDBus/QDBusObjectPath>
 #include <QMap>
 #include <QVariantMap>
+#include <QCursor>
 
 
 #include <Controllers/system.h>
@@ -128,6 +129,9 @@ int main(int argc, char *argv[])
     context->setContextProperty("wifiController", &m_wifi_controller);
     context->setContextProperty("bluetoothController", &m_bluetooth_controller);
     engine.rootContext()->setContextProperty("infoController", &infoController);
+
+    QCursor blankCursor(Qt::BlankCursor);
+    app.setOverrideCursor(blankCursor);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(

@@ -2,6 +2,7 @@
 #define BLUETOOTHAUDIOSOURCE_H
 
 #include "audiosource.h"
+#include "qdbusextratypes.h"
 #include <QVariantMap>
 #include <QObject>
 #include <QTimer>
@@ -34,6 +35,8 @@ public:
 
 private slots:
     void onPropertiesChanged(const QString &interface, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
+    void onInterfacesAdded(const QDBusObjectPath &objectPath, const QVariantMap &interfaces);
+    void onInterfacesRemoved(const QString &objectPath, const QStringList &interfaces);
     void handleStreamRestart();
 
 private:

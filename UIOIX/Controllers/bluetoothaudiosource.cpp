@@ -19,6 +19,23 @@ BluetoothAudioSource::BluetoothAudioSource(QObject *parent) : AudioSource(parent
         this,
         SLOT(onPropertiesChanged(QString,QVariantMap,QStringList))
     );
+
+    QDBusConnection::systemBus().connect(
+        "org.bluez",
+        QString(),
+        "org.freedesktop.DBus.ObjectManager",
+        "InterfacesAdded",
+        this,
+        SLOT(onInterfacesAdded(QDBusObjectPath,QVariantMap))
+    );
+    QDBusConnection::systemBus().connect(
+        "org.bluez",
+        QString(),
+        "org.freedesktop.DBus.ObjectManager",
+        "InterfacesRemoved",
+        this,
+        SLOT(onInterfacesRemoved(QString,QStringList))
+    );
 }
 
 void BluetoothAudioSource::setBluezDevicePath(const QString &path) {
@@ -330,6 +347,24 @@ void BluetoothAudioSource::getTrack() {
         qDebug() << "[BluetoothAudioSource] Track info updated:" << m_currentTrack;
     } else {
         qWarning() << "[BluetoothAudioSource] Failed to get Track metadata:" << trackReply.error().message();
+    }
+}
+
+void BluetoothAudioSource::onInterfacesAdded(const QDBusObjectPath &objectPath, const QVariantMap &interfaces) {
+    if (interfaces.contains("org.bluez.Device1")) {
+        m_bluezDevicePath = objectPath.path();
+        qDebug() << "[BluetoothAudioSource] Device added at path:" << m_bluezDevicePath;
+        emit metadataChanged();
+    }
+}
+
+void BluetoothAudioSource::onInterfacesRemoved(const QString &objectPath, const QStringList &interfaces) {
+    if (interfaces.contains("org.bluez.Device1") && objectPath == m_bluezDevicePath) {
+        qDebug() << "[BluetoothAudioSource] Device removed at path:" << objectPath;
+        m_bluezDevicePath.clear();
+        m_playerPath.clear();
+        m_currentTrack.clear();
+        emit metadataChanged();
     }
 }
 
