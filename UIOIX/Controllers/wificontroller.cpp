@@ -67,7 +67,7 @@ void WiFiController::scanNetworks()
                 for (const QString &line : std::as_const(lines)) {
                     QStringList parts = line.split(':');
                     if (parts.size() >= 3) {
-                        WiFiNetwork* network = new WiFiNetwork(this);
+                        WiFiNetwork* network = new WiFiNetwork(nullptr);
                         network->setName(parts[0]);
                         network->setSignal(parts[1].toInt());
                         network->setSecurity(parts[2]);
