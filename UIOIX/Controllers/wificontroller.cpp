@@ -135,7 +135,7 @@ void WiFiController::connectToNetwork(QObject* networkObj)
                 connectProcess->deleteLater();
             });
 
-    connectProcess->start("ncmli", connectArgs);
+    connectProcess->start("nmcli", connectArgs);
 }
 
 bool WiFiController::isKnownAndTrusted(const QString &ssid) const
