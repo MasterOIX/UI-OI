@@ -267,19 +267,28 @@ bool StorageAudioSource::importFromUsb()
         qDebug() << "[StorageAudioSource] Copying to:" << destPath;
 
         // Ensure destination directory exists
-        QDir().mkpath(QFileInfo(destPath).absolutePath());
-
-        if (!QFile::exists(destPath)) {
+        QFileInfo destInfo(destPath);
+        QDir().mkpath(destInfo.absolutePath());
+        
+        bool shouldCopy = true;
+        if (QFile::exists(destPath)) {
+            QFileInfo sourceInfo(filePath);
+            QFileInfo destInfo(destPath);
+        
+            if (sourceInfo.size() == destInfo.size()) {
+                qDebug() << "[StorageAudioSource] Skipped (already exists and size matches):" << destPath;
+                shouldCopy = false;
+            }
+        }
+        
+        if (shouldCopy) {
             if (QFile::copy(filePath, destPath)) {
                 qDebug() << "[StorageAudioSource] Copied:" << filePath << "→" << destPath;
                 copied << destPath;
             } else {
                 qWarning() << "[StorageAudioSource] Failed to copy:" << filePath << "→" << destPath;
             }
-        } else {
-            qDebug() << "[StorageAudioSource] Skipped (already exists):" << destPath;
         }
-
     }
 
     if (copied.isEmpty()) {
