@@ -4,29 +4,29 @@
 #include <unistd.h>
 #include <gpiod.h>
 #include <QThread>
+#include <QDebug>
 #include <sys/ioctl.h>
-
 
 Si4703Controller::Si4703Controller(QObject *parent) : QObject(parent), i2cFd(-1) {}
 
 bool Si4703Controller::reset() {
     struct gpiod_chip *chip = gpiod_chip_open_by_name("gpiochip0");
     if (!chip) {
-        emit errorMessage("Failed to open GPIO chip.");
+        qDebug() << "Failed to open GPIO chip.";
         return false;
     }
 
     struct gpiod_line *sdio = gpiod_chip_get_line(chip, SDIO_GPIO);
     struct gpiod_line *reset = gpiod_chip_get_line(chip, RESET_GPIO);
     if (!sdio || !reset) {
-        emit errorMessage("Failed to get GPIO lines.");
+        qDebug() << "Failed to get GPIO lines.";
         gpiod_chip_close(chip);
         return false;
     }
 
     if (gpiod_line_request_output(sdio, "si4703", 0) < 0 ||
         gpiod_line_request_output(reset, "si4703", 0) < 0) {
-        emit errorMessage("Failed to set GPIO directions.");
+        qDebug() << "Failed to set GPIO directions.";
         gpiod_chip_close(chip);
         return false;
     }
@@ -43,23 +43,23 @@ bool Si4703Controller::reset() {
 
     i2cFd = open("/dev/i2c-1", O_RDWR);
     if (i2cFd < 0) {
-        emit errorMessage("Failed to open I2C device.");
+        qDebug() << "Failed to open I2C device.";
         return false;
     }
 
     if (ioctl(i2cFd, I2C_SLAVE, I2C_ADDR) < 0) {
-        emit errorMessage("Failed to set I2C address.");
+        qDebug() << "Failed to set I2C address.";
         return false;
     }
 
-    emit statusMessage("SI4703 reset and ready.");
+    qDebug() << "SI4703 reset and ready.";
     return true;
 }
 
 bool Si4703Controller::readRegisters(QVector<uint16_t> &regs) {
     uint8_t buffer[32];
     if (read(i2cFd, buffer, 32) != 32) {
-        emit errorMessage("I2C read failed.");
+        qDebug() << "I2C read failed.";
         return false;
     }
 
@@ -98,7 +98,7 @@ bool Si4703Controller::initialize() {
 
     if (!writeRegisters(regs)) return false;
 
-    emit statusMessage("SI4703 initialized.");
+    qDebug() << "SI4703 initialized.";
     return true;
 }
 
@@ -128,6 +128,7 @@ bool Si4703Controller::tuneFrequency(double freqMHz) {
 
     if (!writeRegisters(regs)) return false;
 
+    qDebug() << "Tuned to" << freqMHz << "MHz.";
     emit tuned(freqMHz);
     return true;
 }
@@ -153,8 +154,8 @@ void Si4703Controller::mute(bool on) {
         regs[POWERCFG] |= DMUTE;
 
     if (writeRegisters(regs)) {
-        emit statusMessage(on ? "Muted" : "Unmuted");
+        qDebug() << (on ? "Muted" : "Unmuted");
     } else {
-        emit errorMessage("Failed to change mute state");
+        qDebug() << "Failed to change mute state";
     }
 }

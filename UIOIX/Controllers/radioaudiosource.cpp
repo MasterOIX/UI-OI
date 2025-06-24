@@ -33,7 +33,7 @@ void RadioAudioSource::play() {
         m_player = nullptr;
     }
 
-    const char* pipelineDesc = "alsasrc device=Device ! audioconvert ! audioresample ! volume name=myvolume ! alsasink device=sndrpihifiberry";
+    const char* pipelineDesc = "alsasrc ! audioconvert ! audioresample ! volume name=myvolume ! alsasink";
     m_player = gst_parse_launch(pipelineDesc, nullptr);
 
     if (!m_player) {
