@@ -24,6 +24,7 @@ Window {
     }
 
     Menu {
+        visible: false
         id: menu
     }
 

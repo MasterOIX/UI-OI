@@ -1,12 +1,15 @@
 #include "zonecontroller.h"
 
-ZoneController::ZoneController(QObject *parent)
+ZoneController::ZoneController(CanController *canCtrl, const QString &role, QObject *parent)
     : QObject(parent),
-      m_autoEnabled(false),
-      m_temperature(21),
-      m_seatHeating(0),
-      m_airZoneMask(0)
+    m_autoEnabled(false),
+    m_temperature(21),
+    m_seatHeating(0),
+    m_airZoneMask(0),
+    m_can(canCtrl),
+    m_role(role)
 {}
+
 
 bool ZoneController::autoEnabled() const
 {
@@ -19,6 +22,9 @@ void ZoneController::setAutoEnabled(bool newAutoEnabled)
         return;
     m_autoEnabled = newAutoEnabled;
     emit autoEnabledChanged();
+
+    if (m_can)
+        m_can->canSend(QString("%1:AUTO=%2").arg(m_role).arg(m_autoEnabled ? 1 : 0));
 }
 
 void ZoneController::increaseTemperature(const int &value)
@@ -55,6 +61,9 @@ void ZoneController::setTemperature(int newTemperature)
         return;
     m_temperature = newTemperature;
     emit temperatureChanged();
+
+    if (m_can)
+        m_can->canSend(QString("%1:TEMP=%2").arg(m_role).arg(m_temperature));
 }
 
 int ZoneController::seatHeating() const
@@ -68,6 +77,9 @@ void ZoneController::setSeatHeating(int newSeatHeating)
         return;
     m_seatHeating = newSeatHeating;
     emit seatHeatingChanged();
+
+    if (m_can)
+        m_can->canSend(QString("%1:HEAT=%2").arg(m_role).arg(newSeatHeating));
 }
 
 int ZoneController::airZoneMask() const
@@ -81,4 +93,7 @@ void ZoneController::setAirZoneMask(int newAirZoneMask)
         return;
     m_airZoneMask = newAirZoneMask;
     emit airZoneMaskChanged();
+
+    if (m_can)
+        m_can->canSend(QString("%1:ZONES=%2").arg(m_role).arg(m_airZoneMask));
 }

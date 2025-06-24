@@ -2,6 +2,7 @@
 #define ZONECONTROLLER_H
 
 #include <QObject>
+#include "cancontroller.h"
 
 class ZoneController : public QObject
 {
@@ -18,7 +19,7 @@ public:
     };
     Q_ENUM(AirZone)
 
-    explicit ZoneController(QObject *parent = nullptr);
+    explicit ZoneController(CanController *canCtrl, const QString &role, QObject *parent = nullptr);
 
     bool autoEnabled() const;
     void setAutoEnabled(bool newAutoEnabled);
@@ -50,6 +51,8 @@ private:
     int m_temperature;
     int m_seatHeating;
     int m_airZoneMask;
+    CanController *m_can = nullptr;
+    QString m_role;
 };
 
 #endif // ZONECONTROLLER_H

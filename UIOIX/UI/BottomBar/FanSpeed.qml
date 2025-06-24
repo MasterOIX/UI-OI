@@ -30,6 +30,10 @@ Item {
             anchors.fill: parent
             onClicked: selectedSpeed = 0
             cursorShape: Qt.PointingHandCursor
+
+            onPressed: {
+                hvacHandler.setSpeedFan(0);
+            }
         }
     }
 
@@ -87,6 +91,7 @@ Item {
                     anchors.fill: parent
                     onClicked: {
                         selectedSpeed = (selectedSpeed === index + 1) ? 0 : index + 1
+                        hvacHandler.setSpeedFan(selectedSpeed);
                     }
                     cursorShape: Qt.PointingHandCursor
                 }
@@ -129,7 +134,10 @@ Item {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: selectedSpeed = (selectedSpeed === 99 ? 0 : 99)
+            onClicked: {
+                selectedSpeed = (selectedSpeed === 99 ? 0 : 99)
+                hvacHandler.setSpeedFan(selectedSpeed);
+            }
             cursorShape: Qt.PointingHandCursor
         }
     }

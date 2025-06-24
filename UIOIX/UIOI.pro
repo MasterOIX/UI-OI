@@ -9,6 +9,7 @@ SOURCES += \
         Controllers/audiosourcemanager.cpp \
         Controllers/bluetoothaudiosource.cpp \
         Controllers/bluetoothcontroller.cpp \
+        Controllers/cancontroller.cpp \
         Controllers/hvachandler.cpp \
         Controllers/infocontroller.cpp \
         Controllers/onlineradioaudiosource.cpp \
@@ -58,6 +59,7 @@ HEADERS += \
     Controllers/bluetoothaudiosource.h \
     Controllers/bluetoothcontroller.h \
     Controllers/bluezagent.h \
+    Controllers/cancontroller.h \
     Controllers/hvachandler.h \
     Controllers/infocontroller.h \
     Controllers/onlineradioaudiosource.h \
