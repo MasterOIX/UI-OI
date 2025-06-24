@@ -66,5 +66,9 @@
         <file>UI/Menu/PasswordDialog.qml</file>
         <file>UI/assests/u_warning.png</file>
         <file>UI/assests/warning.png</file>
+        <file>UI/assests/pngtree-car-top-view-image-png-image_6557068.png</file>
+        <file>UI/assests/carimg.png</file>
+        <file>UI/assests/car_door.png</file>
+        <file>UI/assests/belt.png</file>
     </qresource>
 </RCC>

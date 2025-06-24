@@ -14,6 +14,7 @@ SOURCES += \
         Controllers/onlineradioaudiosource.cpp \
         Controllers/radioaudiosource.cpp \
         Controllers/settingsmanager.cpp \
+        Controllers/si4703controller.cpp \
         Controllers/storageaudiosource.cpp \
         Controllers/system.cpp \
         Controllers/valhallacontroller.cpp \
@@ -25,6 +26,8 @@ SOURCES += \
 RESOURCES += qml.qrc
 LIBS += -lasound
 LIBS += -lm
+LIBS += -lgpiod
+
 
 TRANSLATIONS += \
     UIOI_ro_RO.ts
@@ -60,6 +63,7 @@ HEADERS += \
     Controllers/onlineradioaudiosource.h \
     Controllers/radioaudiosource.h \
     Controllers/settingsmanager.h \
+    Controllers/si4703controller.h \
     Controllers/storageaudiosource.h \
     Controllers/system.h \
     Controllers/valhallacontroller.h \

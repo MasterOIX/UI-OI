@@ -135,11 +135,11 @@ void BluetoothAudioSource::play() {
     qDebug() << "[BluetoothAudioSource] Using BlueALSA device:" << deviceLine;
 
     QString pipelineStr = QString(
-                              "alsasrc device=%1 buffer-time=200000 latency-time=20000 provide-clock=false ! "
-                              "queue ! "
-                              "audioconvert ! audioresample ! "
-                              "volume name=btvolume volume=1.0 ! "
-                              "autoaudiosink").arg(deviceLine);
+      "alsasrc device=%1 buffer-time=200000 latency-time=20000 provide-clock=false ! "
+      "queue ! "
+      "audioconvert ! audioresample ! "
+      "volume name=btvolume volume=1.0 ! "
+      "alsasink device=plughw:sndrpihifiberry").arg(deviceLine);
 
 
     qDebug() << "[BluetoothAudioSource] Starting GStreamer pipeline:" << pipelineStr;

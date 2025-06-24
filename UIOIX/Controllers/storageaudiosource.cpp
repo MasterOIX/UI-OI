@@ -31,7 +31,7 @@ void StorageAudioSource::scanLocalMusic(const QString &path)
 
     // Add folders that contain audio files
     QStringList subDirs = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    for (const QString &subDir : subDirs) {
+    for (const QString &subDir : std::as_const(subDirs)) {
         QDir subPath(dir.filePath(subDir));
         QStringList musicFiles = subPath.entryList({ "*.mp3", "*.wav", "*.flac", "*.ogg", "*.aac" }, QDir::Files);
         if (!musicFiles.isEmpty()) {
