@@ -17,7 +17,7 @@ Item {
     // 🔹 Little Fan (OFF)
     Image {
         id: littleFan
-        source: "qrc:/UI/assests/radiator-fan32.png"
+        source: "qrc:/UI/assets/radiator-fan32.png"
         width: 24
         height: 24
         fillMode: Image.PreserveAspectFit
@@ -111,7 +111,7 @@ Item {
 
         Image {
             id: bigFan
-            source: "qrc:/UI/assests/radiator-fan.png"
+            source: "qrc:/UI/assets/radiator-fan.png"
             anchors.fill: parent
             fillMode: Image.PreserveAspectFit
 

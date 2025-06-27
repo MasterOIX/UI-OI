@@ -31,8 +31,8 @@ Rectangle {
                 height: 30
                 anchors.verticalCenter: parent.verticalCenter
                 source: modelData.code === "01"
-                        ? "qrc:/UI/assests/u_warning.png"
-                        : "qrc:/UI/assests/warning.png"
+                        ? "qrc:/UI/assets/u_warning.png"
+                        : "qrc:/UI/assets/warning.png"
             }
 
             Text {
