@@ -19,7 +19,7 @@ Item {
         }
         width: 25
         height: 23
-        source: "qrc:/UI/assests/heater.png"
+        source: "qrc:/UI/assets/heater.png"
         fillMode: Image.PreserveAspectFit
         visible: zoneModel.seatHeating > 0
     }
@@ -46,7 +46,7 @@ Item {
         }
         width: 18
         height: 12
-        source: "qrc:/UI/assests/arrow.png"
+        source: "qrc:/UI/assets/arrow.png"
         fillMode: Image.PreserveAspectFit
         MouseArea {
             anchors {
@@ -72,7 +72,7 @@ Item {
         }
         width: 18
         height: 12
-        source: "qrc:/UI/assests/arrow.png"
+        source: "qrc:/UI/assets/arrow.png"
         fillMode: Image.PreserveAspectFit
         MouseArea {
             anchors {
@@ -98,7 +98,7 @@ Item {
         }
         width: 18
         height: 12
-        source: "qrc:/UI/assests/arrow_leg.png"
+        source: "qrc:/UI/assets/arrow_leg.png"
         fillMode: Image.PreserveAspectFit
         MouseArea {
             anchors {

@@ -38,7 +38,7 @@ Rectangle {
         }
         height: parent.height * 0.30
         fillMode: Image.PreserveAspectFit
-        source: "qrc:/UI/assests/plus.png"
+        source: "qrc:/UI/assets/plus.png"
         MouseArea {
             anchors.centerIn: parent
             width: parent.width * 2
@@ -82,9 +82,9 @@ Rectangle {
         width: 32
         height: 32
         fillMode: Image.PreserveAspectFit
-        source: audioController.volume > 50 ? "qrc:/UI/assests/volume_1.png"
-              : audioController.volume > 0 ? "qrc:/UI/assests/volume_2.png"
-              : "qrc:/UI/assests/mute.png"
+        source: audioController.volume > 50 ? "qrc:/UI/assets/volume_1.png"
+              : audioController.volume > 0 ? "qrc:/UI/assets/volume_2.png"
+              : "qrc:/UI/assets/mute.png"
         MouseArea {
             anchors.fill: parent
             onClicked: {
@@ -124,7 +124,7 @@ Rectangle {
         }
         width: parent.height * 0.3
         fillMode: Image.PreserveAspectFit
-        source: "qrc:/UI/assests/minus.png"
+        source: "qrc:/UI/assets/minus.png"
         MouseArea {
             anchors.centerIn: parent
             width: parent.width * 2

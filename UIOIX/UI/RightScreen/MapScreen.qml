@@ -58,7 +58,7 @@ Item {
             coordinate: valhalla_controller.currentLocation ? valhalla_controller.currentLocation : QtPositioning.coordinate(44.2015, 26.1989)
             sourceItem: Image {
                 id: iconImage
-                source: "qrc:/UI/assests/navigation.png"
+                source: "qrc:/UI/assets/navigation.png"
                 width: 32
                 height: 32
             }
@@ -66,7 +66,7 @@ Item {
 
         Image {
             id: centerIconStatic
-            source: "qrc:/UI/assests/navigation.png"  // Replace with your icon path
+            source: "qrc:/UI/assets/navigation.png"  // Replace with your icon path
             anchors.centerIn: parent
             width: 32
             height: 32
@@ -79,7 +79,7 @@ Item {
             coordinate: valhalla_controller.destination ? valhalla_controller.destination : QtPositioning.coordinate(44.2015, 26.1989)
             sourceItem: Image {
                 id: location
-                source: "qrc:/UI/assests/pin.png"
+                source: "qrc:/UI/assets/pin.png"
                 width: 32
                 height: 32
             }

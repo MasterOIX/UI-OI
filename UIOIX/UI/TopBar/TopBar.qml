@@ -41,7 +41,7 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
 
         source: {
-            systemHandler.carLocked ? "qrc:/UI/assests/lock.png" : "qrc:/UI/assests/unlock.png"
+            systemHandler.carLocked ? "qrc:/UI/assets/lock.png" : "qrc:/UI/assets/unlock.png"
         }
         MouseArea {
             anchors.fill: parent
@@ -149,7 +149,7 @@ Rectangle {
             right: clockText.left
             rightMargin: 20
         }
-        source: "qrc:/UI/assests/settings.png"
+        source: "qrc:/UI/assets/settings.png"
         width: parent.width / 60
         fillMode: Image.PreserveAspectFit
     }
@@ -178,6 +178,6 @@ Rectangle {
         }
         width: parent.width / 60
         fillMode: Image.PreserveAspectFit
-        source: "qrc:/UI/assests/user.png"
+        source: "qrc:/UI/assets/user.png"
     }
 }

@@ -39,7 +39,7 @@ Rectangle {
         height: bar_height * 0.65
         width: 120
         fillMode: Image.PreserveAspectFit
-        source: "qrc:/UI/assests/car_front_icon.png"
+        source: "qrc:/UI/assets/car_front_icon.png"
         visible: parent.height < bar_height * 1.25
 
         MouseArea {
@@ -138,7 +138,7 @@ Rectangle {
         height: bar_height
         Image {
             id: air
-            source: "qrc:/UI/assests/air.png"
+            source: "qrc:/UI/assets/air.png"
             anchors.centerIn: parent
             fillMode: Image.PreserveAspectFit
             width: 30
@@ -161,7 +161,7 @@ Rectangle {
         height: bar_height
         Image {
             id: rear
-            source: "qrc:/UI/assests/rear.png"
+            source: "qrc:/UI/assets/rear.png"
             anchors.centerIn: parent
             fillMode: Image.PreserveAspectFit
             width: 26
@@ -237,7 +237,7 @@ Rectangle {
     CarSeat {
         id: driverSeat
         zoneModel: hvacHandler.driverZone
-        seat_path: "qrc:/UI/assests/driver_seat.png"
+        seat_path: "qrc:/UI/assets/driver_seat.png"
         anchors {
             top: parent.top
             left: parent.left
@@ -251,7 +251,7 @@ Rectangle {
     CarSeat {
         id: passengerSeat
         zoneModel: hvacHandler.passengerZone
-        seat_path: "qrc:/UI/assests/driver_seat.png"
+        seat_path: "qrc:/UI/assets/driver_seat.png"
         anchors {
             top: parent.top
             left: parent.left

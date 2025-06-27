@@ -9,8 +9,8 @@ Item {
     Image {
         id: seatImage
         source: zone === hvacHandler.passengerZone
-                ? "qrc:/UI/assests/seat_p.png"
-                : "qrc:/UI/assests/seat.png"
+                ? "qrc:/UI/assets/seat_p.png"
+                : "qrc:/UI/assets/seat.png"
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         height: 20

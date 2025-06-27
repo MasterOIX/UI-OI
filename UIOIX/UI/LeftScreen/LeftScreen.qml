@@ -18,7 +18,7 @@ Rectangle {
 
         Image {
             id: carImg
-            source: "qrc:/UI/assests/carimg.png"
+            source: "qrc:/UI/assets/carimg.png"
             anchors.fill: parent
             fillMode: Image.PreserveAspectFit
         }
@@ -26,7 +26,7 @@ Rectangle {
 
         Image {
             id: door1
-            source: "qrc:/UI/assests/car_door.png"
+            source: "qrc:/UI/assets/car_door.png"
             width: 32
             height: 32
             fillMode: Image.PreserveAspectFit
@@ -39,7 +39,7 @@ Rectangle {
         }
         Image {
             id: belt1
-            source: "qrc:/UI/assests/belt.png"
+            source: "qrc:/UI/assets/belt.png"
             width: 32
             height: 32
             fillMode: Image.PreserveAspectFit

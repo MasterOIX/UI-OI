@@ -61,7 +61,7 @@ Item {
 
         Image {
             id: searchIcon
-            source: "qrc:/UI/assests/search.png"
+            source: "qrc:/UI/assets/search.png"
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: parent.left

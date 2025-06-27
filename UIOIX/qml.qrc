@@ -4,56 +4,56 @@
         <file>UI/BottomBar/BottomBar.qml</file>
         <file>UI/RightScreen/RightScreen.qml</file>
         <file>UI/LeftScreen/LeftScreen.qml</file>
-        <file>UI/assests/car_front_icon.png</file>
-        <file>UI/assests/lock.png</file>
-        <file>UI/assests/unlock.png</file>
+        <file>UI/assets/car_front_icon.png</file>
+        <file>UI/assets/lock.png</file>
+        <file>UI/assets/unlock.png</file>
         <file>UI/TopBar/TopBar.qml</file>
-        <file>UI/assests/settings.png</file>
-        <file>UI/assests/user.png</file>
+        <file>UI/assets/settings.png</file>
+        <file>UI/assets/user.png</file>
         <file>UI/RightScreen/NavigationSearchBox.qml</file>
-        <file>UI/assests/search.png</file>
-        <file>UI/assests/volume_1.png</file>
-        <file>UI/assests/volume_2.png</file>
-        <file>UI/assests/minus.png</file>
-        <file>UI/assests/plus.png</file>
-        <file>UI/assests/mute.png</file>
+        <file>UI/assets/search.png</file>
+        <file>UI/assets/volume_1.png</file>
+        <file>UI/assets/volume_2.png</file>
+        <file>UI/assets/minus.png</file>
+        <file>UI/assets/plus.png</file>
+        <file>UI/assets/mute.png</file>
         <file>UI/BottomBar/VolumeControlComponent.qml</file>
         <file>UI/BottomBar/HVACTemperature.qml</file>
         <file>UI/BottomBar/HVACButton.qml</file>
         <file>UI/BottomBar/GlowingTriangle.qml</file>
         <file>UI/BottomBar/GlowingLine.qml</file>
-        <file>UI/assests/car_seat.png</file>
-        <file>UI/assests/driver_seat.png</file>
+        <file>UI/assets/car_seat.png</file>
+        <file>UI/assets/driver_seat.png</file>
         <file>UI/BottomBar/CarSeat.qml</file>
-        <file>UI/assests/heater.png</file>
-        <file>UI/assests/arrow.png</file>
-        <file>UI/assests/arrow_leg.png</file>
-        <file>UI/assests/rear.png</file>
-        <file>UI/assests/air.png</file>
+        <file>UI/assets/heater.png</file>
+        <file>UI/assets/arrow.png</file>
+        <file>UI/assets/arrow_leg.png</file>
+        <file>UI/assets/rear.png</file>
+        <file>UI/assets/air.png</file>
         <file>UI/BottomBar/ACLine.qml</file>
-        <file>UI/assests/radiator-fan.png</file>
-        <file>UI/assests/radiator-fan32.png</file>
+        <file>UI/assets/radiator-fan.png</file>
+        <file>UI/assets/radiator-fan32.png</file>
         <file>UI/BottomBar/FanSpeed.qml</file>
-        <file>UI/assests/seat.png</file>
-        <file>UI/assests/seat_p.png</file>
+        <file>UI/assets/seat.png</file>
+        <file>UI/assets/seat_p.png</file>
         <file>UI/BottomBar/SeatHeaterIndicator.qml</file>
         <file>UI/RightScreen/MediaPlayer.qml</file>
-        <file>UI/assests/media.jpg</file>
-        <file>UI/assests/next.png</file>
-        <file>UI/assests/pause.png</file>
-        <file>UI/assests/play.png</file>
-        <file>UI/assests/previous.png</file>
-        <file>UI/assests/mode.png</file>
-        <file>UI/assests/bluetooth.png</file>
-        <file>UI/assests/fm.png</file>
-        <file>UI/assests/storage.png</file>
-        <file>UI/assests/webradio.png</file>
-        <file>UI/assests/open.png</file>
+        <file>UI/assets/media.jpg</file>
+        <file>UI/assets/next.png</file>
+        <file>UI/assets/pause.png</file>
+        <file>UI/assets/play.png</file>
+        <file>UI/assets/previous.png</file>
+        <file>UI/assets/mode.png</file>
+        <file>UI/assets/bluetooth.png</file>
+        <file>UI/assets/fm.png</file>
+        <file>UI/assets/storage.png</file>
+        <file>UI/assets/webradio.png</file>
+        <file>UI/assets/open.png</file>
         <file>UI/RightScreen/MapScreen.qml</file>
-        <file>UI/assests/navigation.png</file>
+        <file>UI/assets/navigation.png</file>
         <file>UI/RightScreen/Indications.qml</file>
-        <file>UI/assests/pin.png</file>
-        <file>UI/assests/close.png</file>
+        <file>UI/assets/pin.png</file>
+        <file>UI/assets/close.png</file>
         <file>UI/Menu/Menu.qml</file>
         <file>UI/Menu/MenuList.qml</file>
         <file>UI/Menu/SubMenu.qml</file>
@@ -64,11 +64,11 @@
         <file>UI/Menu/VehicleStatus.qml</file>
         <file>UI/Menu/CustomSwitch.qml</file>
         <file>UI/Menu/PasswordDialog.qml</file>
-        <file>UI/assests/u_warning.png</file>
-        <file>UI/assests/warning.png</file>
-        <file>UI/assests/pngtree-car-top-view-image-png-image_6557068.png</file>
-        <file>UI/assests/carimg.png</file>
-        <file>UI/assests/car_door.png</file>
-        <file>UI/assests/belt.png</file>
+        <file>UI/assets/u_warning.png</file>
+        <file>UI/assets/warning.png</file>
+        <file>UI/assets/pngtree-car-top-view-image-png-image_6557068.png</file>
+        <file>UI/assets/carimg.png</file>
+        <file>UI/assets/car_door.png</file>
+        <file>UI/assets/belt.png</file>
     </qresource>
 </RCC>

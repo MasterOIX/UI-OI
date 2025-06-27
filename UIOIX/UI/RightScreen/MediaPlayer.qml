@@ -46,7 +46,7 @@ Item {
         width: height
         Image {
             id: mediaPhoto
-            source: "qrc:/UI/assests/media.jpg"
+            source: "qrc:/UI/assets/media.jpg"
             anchors.fill: parent
             fillMode: Image.PreserveAspectFit
         }
@@ -230,7 +230,7 @@ Item {
         color: "transparent"
         Image {
             id: previousIcon
-            source: "qrc:/UI/assests/previous.png"
+            source: "qrc:/UI/assets/previous.png"
             anchors {
                 left: parent.left
                 verticalCenter: parent.verticalCenter
@@ -250,7 +250,7 @@ Item {
 
         Image {
             id: pausePlayIcon
-            source: audioController.isPlaying ? "qrc:/UI/assests/pause.png" : "qrc:/UI/assests/play.png"
+            source: audioController.isPlaying ? "qrc:/UI/assets/pause.png" : "qrc:/UI/assets/play.png"
             anchors {
                 left: previousIcon.right
                 leftMargin: 55
@@ -271,7 +271,7 @@ Item {
 
         Image {
             id: nextIcon
-            source: "qrc:/UI/assests/next.png"
+            source: "qrc:/UI/assets/next.png"
             anchors {
                 left: pausePlayIcon.right
                 leftMargin: 55
@@ -293,7 +293,7 @@ Item {
 
         Image {
             id: modeIcon
-            source: "qrc:/UI/assests/mode.png"
+            source: "qrc:/UI/assets/mode.png"
             anchors {
                 left: nextIcon.right
                 leftMargin: 55
@@ -314,10 +314,10 @@ Item {
 
         Image {
             id: modeSelectedIcon
-            source: audioController.mode === AudioController.Bluetooth ? "qrc:/UI/assests/bluetooth.png" :
-                    audioController.mode === AudioController.Radio ? "qrc:/UI/assests/fm.png" :
-                    audioController.mode === AudioController.Storage ? "qrc:/UI/assests/storage.png":
-                    "qrc:/UI/assests/webradio.png"
+            source: audioController.mode === AudioController.Bluetooth ? "qrc:/UI/assets/bluetooth.png" :
+                    audioController.mode === AudioController.Radio ? "qrc:/UI/assets/fm.png" :
+                    audioController.mode === AudioController.Storage ? "qrc:/UI/assets/storage.png":
+                    "qrc:/UI/assets/webradio.png"
             anchors {
                 right: parent.right
                 top: parent.top
@@ -331,7 +331,7 @@ Item {
 
         Image {
             id: listOpener
-            source: "qrc:/UI/assests/open.png"
+            source: "qrc:/UI/assets/open.png"
             anchors {
                 top: parent.top
                 topMargin: -5

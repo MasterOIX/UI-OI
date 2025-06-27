@@ -36,7 +36,7 @@ Item {
 
             Image {
                 id: pin
-                source: "qrc:/UI/assests/pin.png"
+                source: "qrc:/UI/assets/pin.png"
                 anchors.centerIn: parent
                 width: 20
                 height: 20
@@ -150,7 +150,7 @@ Item {
             radius: 12
             Image {
                 id: close
-                source: "qrc:/UI/assests/close.png"
+                source: "qrc:/UI/assets/close.png"
                 anchors.centerIn: parent
                 width: 10
                 height: 10
